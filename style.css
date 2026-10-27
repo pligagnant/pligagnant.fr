@@ -1,0 +1,193 @@
+/* Pli Gagnant: one ink blue for actions, kraft for the envelope, highlighter yellow for what the reader must notice. */
+:root {
+  --ink: #16202E;
+  --muted: #4F5B6B;
+  --paper: #FFFFFF;
+  --band: #EEF1F5;
+  --rule: #D5DBE3;
+  --blue: #2340B8;
+  --blue-dark: #182F8C;
+  --kraft: #D6B37C;
+  --kraft-dark: #B88F55;
+  --highlight: #FFE45C;
+  --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+img, svg { max-width: 100%; }
+p { margin: 0; }
+a { color: var(--blue); text-underline-offset: 3px; }
+h1, h2, h3 { margin: 0; line-height: 1.08; text-wrap: balance; }
+h1 { font-size: clamp(2.2rem, 6.2vw, 3.9rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.015em; }
+h2 { font-size: clamp(1.65rem, 3.6vw, 2.35rem); font-weight: 800; font-stretch: 108%; letter-spacing: -0.01em; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+
+/* Header */
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 800; font-stretch: 115%; font-size: 1.2rem; letter-spacing: -0.01em; }
+.brand svg { width: 30px; height: 22px; flex: none; }
+.top .link { font-weight: 700; text-decoration: none; }
+.top .link:hover { text-decoration: underline; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 0 24px; border-radius: 8px;
+  background: var(--blue); color: #fff; border: 2px solid var(--blue);
+  font: inherit; font-weight: 700; font-size: 1.05rem; text-decoration: none; cursor: pointer;
+}
+.btn:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+.btn.plain { background: transparent; color: var(--blue); border-color: transparent; padding: 0 8px; text-decoration: underline; }
+.btn.plain:hover { color: var(--blue-dark); }
+
+/* Hero */
+.hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; padding-top: 40px; padding-bottom: 80px; }
+.hero-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.hero .lead { font-size: 1.2rem; color: var(--muted); max-width: 30em; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.reassure { font-weight: 700; display: flex; gap: 10px; align-items: center; }
+.reassure svg { flex: none; width: 22px; height: 22px; }
+
+/* The envelope: the one memorable object on the page */
+.pli { position: relative; width: 100%; max-width: 470px; justify-self: center; aspect-ratio: 3 / 2; transform: rotate(2.5deg); }
+.pli-body {
+  position: absolute; inset: 0; border-radius: 6px; overflow: hidden;
+  background: var(--kraft);
+  box-shadow: 0 2px 0 var(--kraft-dark), 0 26px 40px -22px rgba(70, 45, 10, 0.55);
+}
+.pli-body::before { /* flap */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 48%;
+  background: var(--kraft-dark); opacity: 0.55;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.pli-label {
+  position: absolute; left: 8%; right: 8%; bottom: 9%;
+  background: #FFFDF8; border-radius: 3px; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: clamp(0.72rem, 2.3vw, 0.86rem); line-height: 1.35;
+  box-shadow: 0 1px 2px rgba(70, 45, 10, 0.25);
+}
+.pli-label b { font-weight: 700; }
+.pli-label .warn { margin-top: 6px; padding-top: 6px; border-top: 1px solid #E6DFD0; font-weight: 800; font-stretch: 110%; }
+.stamp {
+  position: absolute; top: 9%; right: 6%;
+  color: var(--blue); border: 3px solid var(--blue); border-radius: 5px;
+  outline: 1.5px solid var(--blue); outline-offset: 3px;
+  padding: 6px 12px; font-weight: 800; font-stretch: 120%; letter-spacing: 0.05em;
+  font-size: clamp(0.85rem, 2.6vw, 1.1rem); text-transform: uppercase; white-space: nowrap;
+  transform: rotate(-9deg); opacity: 0.9; mix-blend-mode: multiply;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stamp { animation: stamp 0.45s cubic-bezier(.2, .9, .3, 1.2) 0.6s both; }
+  @keyframes stamp {
+    from { opacity: 0; transform: rotate(-9deg) scale(1.7); }
+    to { opacity: 0.9; transform: rotate(-9deg) scale(1); }
+  }
+}
+
+/* Sections */
+.section { padding-top: 72px; padding-bottom: 72px; }
+.section.band { background: var(--band); }
+.section-head { display: flex; flex-direction: column; gap: 12px; max-width: 36em; margin-bottom: 36px; }
+.section-head p { color: var(--muted); font-size: 1.1rem; }
+
+/* Steps: a real sequence, so numbered */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.steps li { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: baseline; }
+.steps .n { grid-row: span 2; font-size: 3rem; line-height: 0.9; font-weight: 800; font-stretch: 115%; color: var(--blue); }
+.steps p { color: var(--muted); }
+
+/* Example */
+.example { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px; align-items: start; }
+.example .section-head { margin-bottom: 0; }
+.note { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; color: var(--ink); }
+.note mark { flex: none; width: 34px; height: 14px; margin-top: 5px; border-radius: 2px; background: var(--highlight); }
+.sheet {
+  background: #fff; border: 1px solid var(--rule); border-radius: 4px;
+  padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 14px;
+  box-shadow: 0 18px 36px -24px rgba(22, 32, 46, 0.45);
+  font-size: 1rem;
+}
+.sheet h3 { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.sheet h3 small { font-size: 0.9rem; font-weight: 700; color: var(--blue); white-space: nowrap; }
+.sheet .hl { background: var(--highlight); padding: 1px 4px; border-radius: 2px; }
+
+/* Prices: a price list, read like a tradesman's tariff */
+.prices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; max-width: 760px; }
+.price-row { display: flex; align-items: baseline; gap: 12px; font-size: 1.25rem; font-weight: 700; }
+.price-row .dots { flex: 1; border-bottom: 2px dotted var(--rule); transform: translateY(-5px); min-width: 24px; }
+.price-row .amount { font-weight: 800; font-stretch: 110%; white-space: nowrap; }
+.price-row .amount small { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.prices p { color: var(--muted); margin-top: 4px; max-width: 34em; }
+.offer { margin-top: 40px; max-width: 760px; background: var(--highlight); border-radius: 8px; padding: 18px 22px; font-weight: 700; font-size: 1.15rem; }
+.fine { margin-top: 16px; max-width: 760px; color: var(--muted); font-size: 0.93rem; }
+
+/* FAQ */
+.faq { max-width: 760px; border-top: 1px solid var(--rule); }
+.faq details { border-bottom: 1px solid var(--rule); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; font-weight: 700; font-size: 1.1rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--blue); font-weight: 800; font-size: 1.4rem; line-height: 1; transition: transform 0.2s ease; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { padding-bottom: 18px; color: var(--muted); max-width: 40em; }
+
+/* Order */
+.order { background: var(--blue); color: #fff; }
+.order .wrap { padding-top: 72px; padding-bottom: 72px; display: flex; flex-direction: column; gap: 20px; }
+.order p { color: #DCE3FA; font-size: 1.1rem; max-width: 34em; }
+.mail { font-size: clamp(1.35rem, 5vw, 2.1rem); font-weight: 800; font-stretch: 108%; color: #fff; overflow-wrap: anywhere; user-select: all; }
+.order .actions { margin-top: 4px; }
+.order .btn { background: #fff; color: var(--blue); border-color: #fff; }
+.order .btn:hover { background: var(--highlight); border-color: var(--highlight); color: var(--ink); }
+.order .btn.ghost { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.order .btn.ghost:hover { background: rgba(255, 255, 255, 0.12); color: #fff; border-color: #fff; }
+.order :focus-visible { outline-color: #fff; }
+.order .status { min-height: 1.4em; font-size: 0.95rem; color: #fff; }
+.order .hint { font-size: 0.95rem; }
+
+/* Footer */
+.foot { padding-top: 32px; padding-bottom: 40px; color: var(--muted); font-size: 0.92rem; }
+.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.foot a { color: var(--muted); }
+
+/* Legal page */
+.legal { padding-top: 32px; padding-bottom: 72px; }
+.legal .doc { max-width: 44em; display: flex; flex-direction: column; gap: 12px; }
+.legal h1 { font-size: clamp(2rem, 5vw, 2.8rem); margin-bottom: 8px; }
+.legal h2 { font-size: 1.6rem; margin-top: 40px; padding-top: 8px; scroll-margin-top: 16px; }
+.legal h3 { font-size: 1.05rem; margin-top: 14px; }
+.legal p, .legal li { color: var(--muted); }
+.legal ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.legal .version { font-size: 0.9rem; }
+.legal nav { display: flex; flex-wrap: wrap; gap: 8px 20px; font-weight: 700; }
+
+@media (max-width: 880px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 48px; padding-top: 24px; padding-bottom: 64px; }
+  .pli { max-width: 420px; }
+  .steps { grid-template-columns: 1fr; gap: 26px; }
+  .example { grid-template-columns: 1fr; gap: 28px; }
+  .section { padding-top: 56px; padding-bottom: 56px; }
+}
+@media (max-width: 520px) {
+  body { font-size: 1rem; }
+  .hero .lead { font-size: 1.08rem; }
+  .actions .btn:not(.plain) { width: 100%; }
+  .price-row { font-size: 1.08rem; flex-wrap: wrap; }
+  .price-row .dots { display: none; }
+  .price-row .amount { width: 100%; font-size: 1.3rem; }
+  .pli-label { padding: 10px 12px; }
+}
