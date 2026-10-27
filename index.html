@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pli Gagnant · Mémoires techniques pour les marchés publics</title>
+<meta name="description" content="Pli Gagnant rédige votre mémoire technique sur mesure pour les marchés publics, construit sur la grille de notation de l'acheteur et livré en 72 heures. Premier mémoire payé seulement s'il vous convient.">
+<link rel="canonical" href="https://pligagnant.fr/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://pligagnant.fr/">
+<meta property="og:title" content="Pli Gagnant · Mémoires techniques pour les marchés publics">
+<meta property="og:description" content="Votre mémoire technique rédigé sur mesure, construit sur la grille de notation de l'acheteur et livré en 72 heures.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230B6A4C'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-weight='700' font-size='15' text-anchor='middle' fill='%23fff'%3EPG%3C/text%3E%3C/svg%3E">
+<style>
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a tender-response folder. Each section carries a mono "pièce" tag in the margin; the hero pairs the promise with a real-looking notation grid. */
+:root {
+  --paper: #F5F7F6;
+  --surface: #FFFFFF;
+  --ink: #14203A;
+  --muted: #586276;
+  --rule: #D6DBE2;
+  --accent: #0B6A4C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E2EEE8;
+  --mark: #FCEFB4;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1: 0.84rem;
+  --step-0: 1.05rem;
+  --step-1: 1.3rem;
+  --step-2: 1.7rem;
+  --step-3: clamp(2.1rem, 4.6vw, 3.3rem);
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D131E; --surface: #141C2A; --ink: #E6EAF1; --muted: #9AA4B6;
+    --rule: #283244; --accent: #4CC28F; --accent-ink: #08140F; --accent-soft: #15302A;
+    --mark: #4A3F12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D131E; --surface: #141C2A; --ink: #E6EAF1; --muted: #9AA4B6;
+  --rule: #283244; --accent: #4CC28F; --accent-ink: #08140F; --accent-soft: #15302A;
+  --mark: #4A3F12;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--display); line-height: 1.12; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: var(--step-3); font-weight: 800; }
+h2 { font-size: var(--step-2); font-weight: 700; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); }
+.tag {
+  font-family: var(--mono); font-size: 0.74rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted);
+}
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Header */
+.top { border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand b { font-family: var(--display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+.brand span { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 700;
+  font-size: 0.98rem; padding: 12px 18px; border-radius: var(--radius); text-decoration: none;
+  background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent); cursor: pointer;
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn:focus-visible, .copy:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Hero */
+.hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; padding-block: 56px 64px; align-items: start; }
+.hero-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 34em; line-height: 1.5; }
+.lead strong { color: var(--ink); font-weight: 600; }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.promise { display: flex; gap: 22px; flex-wrap: wrap; padding-top: 6px; }
+.promise div { display: flex; flex-direction: column; }
+.promise .num { font-size: 1.35rem; font-weight: 500; color: var(--ink); }
+.promise .tag { font-size: 0.68rem; }
+
+.grid-card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); min-width: 0; }
+.grid-card header { padding: 14px 18px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.grid-card table { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
+.grid-card th, .grid-card td { text-align: left; padding: 9px 18px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.grid-card th { font-family: var(--mono); font-weight: 400; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.grid-card td.pts, .grid-card th.pts { text-align: right; white-space: nowrap; }
+.grid-card td.sec { font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; color: var(--accent); }
+.grid-card tr.group td { font-family: var(--display); font-weight: 700; background: var(--accent-soft); }
+.grid-card tr.muted td { color: var(--muted); }
+.grid-card tr.sub td:first-child { padding-left: 32px; }
+.grid-card footer { padding: 12px 18px; font-size: 0.88rem; color: var(--muted); }
+
+/* Sections */
+section.block { border-top: 1px solid var(--rule); }
+section.block > .wrap { display: grid; grid-template-columns: 180px 1fr; gap: 32px; padding-block: 56px; }
+section.block > .wrap > .tag { padding-top: 8px; }
+.content { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.content > p { max-width: 40em; }
+
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.facts div { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.facts .big { font-family: var(--display); font-weight: 800; font-size: 2.1rem; line-height: 1; color: var(--accent); }
+.facts p { color: var(--muted); font-size: 0.98rem; }
+
+ol.steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; counter-reset: step; }
+ol.steps li { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding-top: 14px; border-top: 2px solid var(--ink); }
+ol.steps li::before { counter-increment: step; content: "Étape " counter(step); font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+ol.steps h3 { font-size: 1.08rem; }
+ol.steps p { font-size: 0.96rem; color: var(--muted); }
+
+.example { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 28px; align-items: start; }
+.example > div { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+ol.plan { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+ol.plan li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 0.95rem; }
+ol.plan li.sub { padding-left: 18px; color: var(--muted); font-size: 0.9rem; }
+ol.plan .pts { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); white-space: nowrap; }
+.excerpt { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.excerpt h3 { font-size: 1.05rem; }
+.excerpt p { font-size: 0.97rem; }
+.excerpt mark { background: var(--mark); color: var(--ink); padding: 1px 4px; border-radius: 3px; }
+.offer-banner { background: var(--accent-soft); border-radius: var(--radius); padding: 16px 20px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+.offer-banner b { font-family: var(--display); }
+.prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.price { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); padding: 22px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.price.main { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.price .amount { font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1; }
+.price .amount small { font-family: var(--mono); font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-left: 4px; }
+.price ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+.price .who { color: var(--muted); font-size: 0.93rem; }
+.fineprint { font-size: 0.88rem; color: var(--muted); }
+
+.commit { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 32px; }
+.commit div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.commit h3 { font-size: 1.05rem; }
+.commit p { color: var(--muted); font-size: 0.97rem; }
+
+details { border-bottom: 1px solid var(--rule); padding-block: 14px; }
+details:first-of-type { border-top: 1px solid var(--rule); }
+summary { cursor: pointer; font-family: var(--display); font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: var(--mono); color: var(--muted); }
+details[open] summary::after { content: "–"; }
+details p { padding-top: 10px; color: var(--muted); max-width: 42em; }
+
+.order { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.order > div { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.mailbox { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.mailbox code { font-family: var(--mono); font-size: 1.02rem; padding: 10px 12px; background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius); user-select: all; overflow-wrap: anywhere; }
+.copy { font-family: var(--mono); font-size: 0.8rem; padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer; }
+.order ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 0.96rem; }
+.status { font-size: 0.9rem; color: var(--muted); min-height: 1.4em; }
+
+.foot .wrap { padding-block: 32px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 0.86rem; color: var(--muted); border-top: 1px solid var(--rule); }
+
+.doc { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; max-width: 46em; }
+.doc h3 { font-size: 1rem; padding-top: 8px; }
+.doc p, .doc li { color: var(--muted); font-size: 0.95rem; }
+.doc p { padding-top: 0; max-width: none; }
+.doc ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.doc a { overflow-wrap: anywhere; }
+.foot-links { display: flex; gap: 16px; flex-wrap: wrap; }
+.foot a { color: var(--muted); }
+
+@media (max-width: 900px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 36px; padding-block: 40px 48px; }
+  .example { grid-template-columns: 1fr; }
+  section.block > .wrap { grid-template-columns: 1fr; gap: 14px; padding-block: 44px; }
+  ol.steps { grid-template-columns: repeat(2, 1fr); }
+  .prices { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; gap: 22px; }
+  .order { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  ol.steps { grid-template-columns: 1fr; }
+  .commit { grid-template-columns: 1fr; }
+  .grid-card th, .grid-card td { padding: 8px 12px; }
+  .grid-card tr.sub td:first-child { padding-left: 22px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-1px); }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#haut" id="haut"><b>Pli Gagnant</b><span>mémoires techniques · marchés publics</span></a>
+    <a class="btn ghost" href="#commander">Envoyer un dossier</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="tag">Pour les TPE et PME qui répondent aux appels d'offres</span>
+        <h1>Votre mémoire technique, rédigé sur mesure et livré en 72&nbsp;heures.</h1>
+        <p class="lead">Vous envoyez le dossier de consultation et vos références. Nous rendons un mémoire <strong>construit sur la grille de notation de l'acheteur</strong>, prêt à relire, signer et déposer.</p>
+        <div class="cta-row">
+          <a class="btn" href="#commander">Envoyer mon dossier</a>
+          <a class="btn ghost" href="#tarifs">Voir les tarifs</a>
+        </div>
+        <div class="promise">
+          <div><span class="num">24 h</span><span class="tag">analyse du DCE</span></div>
+          <div><span class="num">72 h</span><span class="tag">mémoire livré</span></div>
+          <div><span class="num">690 €</span><span class="tag">HT le mémoire</span></div>
+        </div>
+      </div>
+
+      <aside class="grid-card" aria-label="Exemple de grille de notation">
+        <header><span class="tag">Exemple · Règlement de consultation</span><span class="tag">Notation sur 100</span></header>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Critère</th><th class="pts">Points</th><th>Mémoire</th></tr></thead>
+            <tbody>
+              <tr class="muted"><td>Prix des prestations</td><td class="pts num">40</td><td class="sec">BPU</td></tr>
+              <tr class="group"><td>Valeur technique</td><td class="pts num">60</td><td></td></tr>
+              <tr class="sub"><td>Méthodologie d'intervention</td><td class="pts num">25</td><td class="sec">§ 2</td></tr>
+              <tr class="sub"><td>Moyens humains affectés</td><td class="pts num">15</td><td class="sec">§ 3</td></tr>
+              <tr class="sub"><td>Moyens matériels</td><td class="pts num">10</td><td class="sec">§ 4</td></tr>
+              <tr class="sub"><td>Planning et délais</td><td class="pts num">5</td><td class="sec">§ 5</td></tr>
+              <tr class="sub"><td>Démarche environnementale</td><td class="pts num">5</td><td class="sec">§ 6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer>Chaque sous-critère reçoit sa propre section, dans l'ordre et avec le poids que l'acheteur lui donne.</footer>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="tag">Le constat</span>
+      <div class="content">
+        <h2>Le mémoire fait souvent la différence, et c'est la pièce la plus longue à écrire.</h2>
+        <div class="facts">
+          <div><span class="big">40–60 %</span><p>de la note finale repose souvent sur la valeur technique, donc sur le mémoire.</p></div>
+          <div><span class="big">3–5 j</span><p>de travail par réponse quand il est rédigé en interne, souvent le soir, après le chantier.</p></div>
+          <div><span class="big">1 marché, 1 mémoire</span><p>Les acheteurs repèrent les mémoires génériques copiés d'une offre à l'autre et dégradent leur note.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="tag">La méthode</span>
+      <div class="content">
+        <h2>Quatre étapes, tout par écrit.</h2>
+        <ol class="steps">
+          <li><h3>Vous envoyez le dossier</h3><p>Le DCE complet (RC, CCTP, CCAP, cadre de mémoire s'il existe) et vos éléments : références, effectifs, matériel, certifications.</p></li>
+          <li><h3>Analyse sous 24 h</h3><p>Grille de notation extraite, pièces exigées listées, points bloquants signalés. Si le marché ne vous correspond pas, nous vous le disons.</p></li>
+          <li><h3>Rédaction sur mesure</h3><p>Un plan calqué sur les critères, un contenu tiré de vos vraies références et adapté au CCTP de ce marché.</p></li>
+          <li><h3>Livraison sous 72 h</h3><p>Un fichier Word modifiable, mis en page. Une série de corrections est incluse.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="exemple">
+    <div class="wrap">
+      <span class="tag">Exemple</span>
+      <div class="content">
+        <h2>À quoi ressemble un mémoire Pli Gagnant</h2>
+        <p>Extrait d'un mémoire rédigé pour un cas fictif : l'entretien des espaces verts des cinq groupes scolaires d'une commune de 15 000 habitants. L'acheteur et l'entreprise sont imaginaires.</p>
+        <div class="example">
+          <div>
+            <span class="tag">Le plan suit la grille de notation</span>
+            <ol class="plan">
+              <li><span>1. Compréhension du besoin et des sites</span><span class="pts">contexte</span></li>
+              <li><span>2. Méthodologie d'intervention</span><span class="pts">25 pts</span></li>
+              <li class="sub"><span>2.1 Tontes et fauchages</span></li>
+              <li class="sub"><span>2.2 Taille des haies et arbustes</span></li>
+              <li class="sub"><span>2.3 Gestion différenciée, zéro phyto</span></li>
+              <li><span>3. Moyens humains affectés</span><span class="pts">15 pts</span></li>
+              <li><span>4. Moyens matériels</span><span class="pts">10 pts</span></li>
+              <li><span>5. Planning et délais</span><span class="pts">5 pts</span></li>
+              <li><span>6. Démarche environnementale</span><span class="pts">5 pts</span></li>
+              <li><span>Annexes : références, attestations</span><span class="pts">pièces</span></li>
+            </ol>
+          </div>
+          <article class="excerpt" aria-label="Extrait du mémoire">
+            <span class="tag">Extrait · § 2.1</span>
+            <h3>2.1 Tontes et fauchages</h3>
+            <p>Le CCTP prévoit 14 passages de tonte par an sur les 3,2 ha de pelouses des cinq groupes scolaires, avec une hauteur de coupe maintenue entre 6 et 8 cm (article 4.2). Nous organisons ces passages en deux tournées hebdomadaires d'avril à octobre, le mercredi et le samedi matin, lorsque les écoles sont fermées : aucun engin ne circule pendant la présence des élèves.</p>
+            <p>Chaque tournée mobilise deux agents, une tondeuse autoportée et un débroussailleur pour les bordures. Les déchets de tonte restent sur place en mulching sur les grandes surfaces et sont ramassés aux abords des cours, comme le demande l'article 4.5. Après chaque passage, le chef d'équipe remplit une fiche d'intervention datée et photographiée, transmise le jour même au service technique.</p>
+            <p>Chef d'équipe désigné : <mark>[À COMPLÉTER : nom et numéro du certificat Certiphyto]</mark></p>
+          </article>
+        </div>
+        <p class="fineprint">Chaque section répond au cahier des charges de la consultation, avec des chiffres et des engagements vérifiables. Une information que vous ne nous avez pas fournie n'est jamais inventée : elle apparaît surlignée, à compléter avant le dépôt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="tarifs">
+    <div class="wrap">
+      <span class="tag">Tarifs</span>
+      <div class="content">
+        <h2>Un prix fixe, connu avant de commencer.</h2>
+        <div class="offer-banner"><b>Premier mémoire :</b><span>vous ne payez que s'il vous convient.</span></div>
+        <div class="prices">
+          <div class="price main">
+            <span class="tag">À l'unité</span>
+            <div class="amount">690 €<small>HT</small></div>
+            <p class="who">Pour une consultation ponctuelle.</p>
+            <ul><li>Mémoire jusqu'à 25 pages</li><li>Analyse du DCE et de la grille</li><li>Livraison en 72 h ouvrées</li><li>Une série de corrections</li></ul>
+          </div>
+          <div class="price">
+            <span class="tag">Dossier complexe</span>
+            <div class="amount">990 €<small>HT</small></div>
+            <p class="who">Plusieurs lots, gros volume ou délai serré.</p>
+            <ul><li>Au-delà de 25 pages ou multi-lots</li><li>Livraison possible en 48 h</li><li>Tableau de conformité au CCTP</li><li>Deux séries de corrections</li></ul>
+          </div>
+          <div class="price">
+            <span class="tag">Abonnement</span>
+            <div class="amount">1 990 €<small>HT / mois</small></div>
+            <p class="who">Pour les entreprises qui répondent chaque semaine.</p>
+            <ul><li>4 mémoires par mois</li><li>Veille des appels d'offres de votre secteur</li><li>Bibliothèque de contenus réutilisables</li><li>Traitement prioritaire, sans engagement</li></ul>
+          </div>
+        </div>
+        <p class="fineprint">Prix en euros (EUR), hors taxes. TVA non applicable, art. 293 B du CGI. Paiement par carte bancaire sur la page sécurisée de Stripe, ou par virement. Offre « premier mémoire » valable une fois par entreprise, sur un mémoire à l'unité. Annulation gratuite jusqu'à la livraison. Délais comptés à partir de la réception d'un dossier complet ; envoyez votre DCE au moins 5 jours ouvrés avant la date limite de remise des offres. Détails dans nos <a href="#cgv">conditions générales de vente</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="tag">Nos engagements</span>
+      <div class="content">
+        <h2>Ce que nous faisons, et ce que nous ne ferons jamais.</h2>
+        <div class="commit">
+          <div><h3>Rien d'inventé</h3><p>Aucune référence, certification ou moyen que vous n'avez pas. Ce qui manque est signalé, pas comblé.</p></div>
+          <div><h3>Vous gardez la main</h3><p>Le mémoire devient une pièce contractuelle. Vous relisez, validez et déposez vous-même.</p></div>
+          <div><h3>Confidentialité</h3><p>Vos documents servent uniquement à votre dossier et ne sont jamais réutilisés pour un autre client.</p></div>
+          <div><h3>Transparence</h3><p>L'analyse et la rédaction sont réalisées par intelligence artificielle, selon une méthode et un contrôle qualité dédiés aux marchés publics.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <span class="tag">Questions</span>
+      <div class="content">
+        <div>
+          <details><summary>Quels secteurs traitez-vous ?</summary><p>Travaux (second œuvre, VRD, espaces verts), services (propreté, maintenance, sécurité, formation, transport) et fournitures. Si le marché demande une expertise que vos documents ne couvrent pas, nous vous le signalons dès l'analyse.</p></details>
+          <details><summary>Que dois-je fournir ?</summary><p>Le DCE tel que téléchargé sur la plateforme de l'acheteur, et vos éléments : références récentes, organigramme ou effectifs, liste du matériel, certifications, et si vous en avez, un ancien mémoire. La première fois, une fiche entreprise de deux pages suffit ; elle est réutilisée ensuite.</p></details>
+          <details><summary>Garantissez-vous que je remporte le marché ?</summary><p>Non. Personne ne peut le garantir : le prix, la concurrence et le choix de l'acheteur comptent aussi. Nous garantissons un mémoire complet, aligné sur chaque critère et fidèle à votre entreprise.</p></details>
+          <details><summary>Comment se passe le paiement ?</summary><p>Le premier mémoire est payé seulement s'il vous convient. Ensuite, facture à la livraison pour les mémoires à l'unité, réglée par carte bancaire sur la page sécurisée de Stripe ou par virement, ou prélèvement mensuel pour l'abonnement, résiliable à tout moment. Vos données de carte ne nous sont jamais transmises.</p></details>
+          <details><summary>Puis-je annuler ou être remboursé ?</summary><p>Oui. Une commande s'annule sans frais, par simple email, tant que le mémoire n'est pas livré. Si le mémoire livré ne respecte pas la commande, nous le corrigeons sans frais, ou nous vous remboursons intégralement si la correction n'est pas possible avant la date limite. L'abonnement se résilie à tout moment et prend fin à l'issue du mois déjà payé.</p></details>
+          <details id="veille"><summary>Proposez-vous une veille des appels d'offres ?</summary><p>Oui, gratuitement. Écrivez-nous « VEILLE » en précisant votre métier et vos départements : chaque lundi, vous recevez par email les consultations ouvertes qui vous correspondent, avec leur date limite et le lien vers l'avis. Vous vous désinscrivez à tout moment en répondant « STOP ».</p></details>
+          <details><summary>Faut-il un rendez-vous téléphonique ?</summary><p>Non. Tout se fait par écrit. Si une information manque, nous vous envoyons une liste précise de questions par email.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="commander">
+    <div class="wrap">
+      <span class="tag">Commander</span>
+      <div class="content">
+        <h2>Envoyez votre dossier, nous répondons sous 24 heures ouvrées.</h2>
+        <div class="order">
+          <div>
+            <span class="tag">Adresse de commande</span>
+            <div class="mailbox" id="mailbox"></div>
+            <p class="status" id="copy-status" role="status" aria-live="polite"></p>
+            <p class="fineprint">Objet conseillé : « Mémoire – nom du marché – date limite ». Pour les fichiers lourds, un lien de téléchargement fonctionne aussi.</p>
+          </div>
+          <div>
+            <span class="tag">À joindre</span>
+            <ul>
+              <li>Le DCE complet (ou le lien vers la consultation)</li>
+              <li>La date limite de remise des offres</li>
+              <li>Vos références des trois dernières années</li>
+              <li>Effectifs, matériel et certifications</li>
+              <li>Un ancien mémoire, si vous en avez un</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="informations-legales">
+    <div class="wrap">
+      <span class="tag">Informations légales</span>
+      <div class="content">
+        <div>
+          <details id="cgv">
+            <summary>Conditions générales de vente</summary>
+            <div class="doc">
+              <span class="tag">Version du 16 octobre 2026</span>
+              <h3>1. Objet</h3>
+              <p>Les présentes conditions s'appliquent aux prestations vendues par Pli Gagnant : analyse de dossiers de consultation (DCE) et rédaction de mémoires techniques pour les réponses aux marchés publics. Elles s'adressent exclusivement aux professionnels. Toute commande vaut acceptation de ces conditions.</p>
+              <h3>2. Prestations</h3>
+              <p>Pli Gagnant analyse le dossier transmis par le client et rédige un mémoire technique fondé sur le règlement de la consultation, le cahier des charges et les informations fournies par le client. L'analyse et la rédaction sont réalisées à l'aide d'outils d'intelligence artificielle, selon une méthode et un contrôle qualité dédiés aux marchés publics. Le livrable est un fichier Word modifiable, envoyé par email.</p>
+              <h3>3. Commande</h3>
+              <p>Le client commande par email à l'adresse indiquée sur ce site, en joignant le dossier de consultation et les informations sur son entreprise. Notre email d'analyse confirme la commande : il précise la formule, le prix et la date de livraison prévue.</p>
+              <h3>4. Prix</h3>
+              <p>Les prix sont indiqués en euros (EUR), hors taxes : 690 € HT pour un mémoire à l'unité, 990 € HT pour un dossier complexe (plusieurs lots, plus de 25 pages ou délai de 48 heures), 1 990 € HT par mois pour l'abonnement de 4 mémoires. TVA non applicable, article 293 B du Code général des impôts. Le prix applicable est celui en vigueur à la date de confirmation de la commande.</p>
+              <h3>5. Offre « premier mémoire »</h3>
+              <p>Le premier mémoire à l'unité commandé par une entreprise n'est dû que s'il lui convient. Si le client nous indique par email, dans les 7 jours suivant la livraison, que le mémoire ne lui convient pas, aucune somme ne lui est réclamée. Sans réponse dans ce délai, la prestation est due. L'offre s'applique une seule fois par entreprise.</p>
+              <h3>6. Paiement</h3>
+              <p>Les prestations à l'unité sont payables à réception de la facture, au plus tard 15 jours après sa date, par carte bancaire sur la page de paiement sécurisée de Stripe ou par virement. L'abonnement est payable d'avance chaque mois par carte bancaire. Les données de carte sont saisies chez Stripe et ne sont jamais transmises à Pli Gagnant.</p>
+              <p>Tout retard de paiement entraîne de plein droit des pénalités égales à trois fois le taux d'intérêt légal, ainsi qu'une indemnité forfaitaire de 40 € pour frais de recouvrement (articles L441-10 et D441-5 du Code de commerce). Aucun escompte n'est accordé en cas de paiement anticipé.</p>
+              <h3>7. Délais de livraison</h3>
+              <p>Le délai de livraison (72 heures ouvrées pour un mémoire à l'unité, 48 heures possibles pour un dossier complexe) court à partir de la réception d'un dossier complet. Si la date limite de remise des offres ne permet pas de le respecter, nous le signalons avant de commencer la rédaction.</p>
+              <h3>8. Corrections</h3>
+              <p>Une série de corrections est incluse pour un mémoire à l'unité, deux pour un dossier complexe, à demander dans les 7 jours suivant la livraison. Les demandes supplémentaires font l'objet d'un devis préalable.</p>
+              <h3>9. Annulation, résiliation et remboursement</h3>
+              <p>Le client peut annuler une commande sans frais, par simple email, tant que le mémoire n'a pas été livré.</p>
+              <p>Si le mémoire livré n'est pas conforme à la commande (critère du règlement non traité, délai non respecté), le client nous le signale par email dans les 7 jours suivant la livraison. Nous le corrigeons sans frais ou, si la correction n'est pas possible avant la date limite de remise des offres, nous remboursons intégralement la prestation sous 14 jours, par le moyen de paiement utilisé.</p>
+              <p>L'abonnement est sans engagement. Le client le résilie à tout moment par email ; la résiliation prend effet à la fin du mois déjà payé et aucun nouveau paiement n'est prélevé. Les mémoires non utilisés au cours d'un mois ne sont pas reportés.</p>
+              <p>Les prestations étant réservées aux professionnels, le droit de rétractation du Code de la consommation ne s'applique pas.</p>
+              <h3>10. Responsabilités</h3>
+              <p>Le client fournit des informations exactes et complètes. Il relit, complète, valide et dépose lui-même le mémoire, qui engage son entreprise envers l'acheteur public. Pli Gagnant n'invente aucune information : les éléments manquants sont signalés dans le document. Pli Gagnant ne garantit pas l'attribution du marché. Sa responsabilité est limitée au montant payé pour la prestation concernée.</p>
+              <h3>11. Confidentialité et propriété</h3>
+              <p>Les documents transmis servent uniquement à la prestation du client et ne sont jamais réutilisés pour un autre client. Le client devient propriétaire du mémoire livré dès son paiement, ou dès sa livraison dans le cadre de l'offre « premier mémoire ».</p>
+              <h3>12. Droit applicable et litiges</h3>
+              <p>Les présentes conditions sont soumises au droit français. En cas de différend, les parties recherchent d'abord une solution amiable ; à défaut, le litige est porté devant le tribunal compétent du lieu d'établissement de Pli Gagnant.</p>
+            </div>
+          </details>
+
+          <details id="confidentialite">
+            <summary>Politique de confidentialité</summary>
+            <div class="doc">
+              <span class="tag">Version du 16 octobre 2026</span>
+              <h3>Responsable du traitement</h3>
+              <p>Pli Gagnant, dont les coordonnées figurent dans les mentions légales. Pour toute question : <span data-f="email"></span>.</p>
+              <h3>Données traitées</h3>
+              <ul>
+                <li>Clients : nom de l'entreprise, nom et coordonnées professionnelles de l'interlocuteur, documents transmis pour la prestation, données de facturation.</li>
+                <li>Entreprises prospectées : nom de l'entreprise, adresse email professionnelle publiée par l'entreprise, informations publiques sur les marchés qu'elle a remportés (avis publiés au BOAMP et sur les plateformes de marchés publics).</li>
+                <li>Abonnés à la veille des appels d'offres : nom de l'entreprise, adresse email, métier et départements suivis.</li>
+                <li>Ce site ne comporte ni formulaire ni outil de mesure d'audience : Pli Gagnant n'y collecte aucune donnée.</li>
+              </ul>
+              <h3>Finalités et bases légales</h3>
+              <ul>
+                <li>Réaliser et facturer les prestations : exécution du contrat.</li>
+                <li>Tenir la comptabilité : obligation légale.</li>
+                <li>Envoyer la veille hebdomadaire des appels d'offres : consentement, donné en nous écrivant « VEILLE » et retiré à tout moment en répondant « STOP ».</li>
+                <li>Proposer nos services par email à des entreprises, en rapport avec leur activité : intérêt légitime. Chaque message permet de s'opposer à tout nouvel envoi en répondant « STOP » ; l'opposition est prise en compte immédiatement et définitivement.</li>
+              </ul>
+              <h3>Prestataires</h3>
+              <ul>
+                <li>Google : messagerie électronique.</li>
+                <li>AgentMail : réception et lecture des documents joints aux commandes.</li>
+                <li>Anthropic : outils d'intelligence artificielle utilisés pour l'analyse et la rédaction.</li>
+                <li>GitHub : hébergement de ce site.</li>
+                <li>Stripe : paiement en ligne. Stripe traite les données de paiement selon sa propre politique de confidentialité (<a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com/fr/privacy</a>).</li>
+              </ul>
+              <p>Ces prestataires peuvent traiter des données hors de l'Union européenne, notamment aux États-Unis. Ces transferts sont encadrés par les garanties prévues par le RGPD (décision d'adéquation ou clauses contractuelles types).</p>
+              <h3>Durées de conservation</h3>
+              <ul>
+                <li>Entreprises prospectées : 3 ans après le dernier contact. En cas d'opposition, seule l'adresse est conservée, pour ne plus jamais la contacter.</li>
+                <li>Clients : durée de la relation commerciale, puis 3 ans.</li>
+                <li>Abonnés à la veille : jusqu'à la désinscription, ou 3 ans sans aucun échange.</li>
+                <li>Documents de consultation et mémoires : 3 ans après la dernière commande du client, puis suppression ; plus tôt sur simple demande.</li>
+                <li>Factures : 10 ans.</li>
+              </ul>
+              <h3>Vos droits</h3>
+              <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité. Écrivez-nous à <span data-f="email"></span> ; nous répondons sous un mois. Vous pouvez aussi adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
+              <h3>Cookies</h3>
+              <p>Pli Gagnant ne dépose aucun cookie. Ce site affiche des polices de caractères chargées depuis Google Fonts, ce qui transmet votre adresse IP à Google. L'hébergeur du site, GitHub, peut enregistrer l'adresse IP des visiteurs pour assurer la sécurité du service.</p>
+            </div>
+          </details>
+
+          <details id="mentions-legales">
+            <summary>Mentions légales</summary>
+            <div class="doc">
+              <ul>
+                <li>Éditeur : Pli Gagnant, <span data-legal-status></span></li>
+                <li data-line>Titulaire : <span data-f="titulaire"></span>, entrepreneur individuel (EI)</li>
+                <li data-line>Adresse : <span data-f="adresse"></span></li>
+                <li data-line>Téléphone : <span data-f="telephone"></span></li>
+                <li>Email : <span data-f="email"></span></li>
+                <li data-line>Directeur de la publication : <span data-f="titulaire"></span></li>
+                <li>Activité : rédaction de mémoires techniques et assistance à la réponse aux marchés publics</li>
+                <li>Hébergeur : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (GitHub Pages)</li>
+              </ul>
+              <p>Les textes et la présentation de ce site appartiennent à Pli Gagnant. Toute reproduction sans autorisation est interdite.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Pli Gagnant · <span id="legal"></span> · <span data-f="email"></span></span>
+    <nav class="foot-links" aria-label="Informations légales"><a href="#cgv">Conditions de vente</a><a href="#confidentialite">Confidentialité</a><a href="#mentions-legales">Mentions légales</a></nav>
+  </div>
+</footer>
+
+<script>
+  // Business settings: titulaire, adresse, telephone and siret are filled in when known.
+  const BUSINESS = {
+    email: "pligagnant@gmail.com",
+    titulaire: "Jawad Abbas",
+    adresse: "3 Les Hérons, 78170 La Celle-Saint-Cloud, France",
+    telephone: "07 83 84 29 72",
+    siret: "977 494 913 00022"
+  };
+  const CONTACT_EMAIL = BUSINESS.email;
+  const LEGAL_LINE = BUSINESS.siret
+    ? "entrepreneur individuel (EI), SIRET " + BUSINESS.siret
+    : "entreprise individuelle en cours d'immatriculation";
+
+  const box = document.getElementById("mailbox");
+  const status = document.getElementById("copy-status");
+  document.getElementById("legal").textContent = LEGAL_LINE;
+  document.querySelectorAll("[data-legal-status]").forEach(el => { el.textContent = LEGAL_LINE; });
+  document.querySelectorAll("[data-f]").forEach(el => {
+    const v = BUSINESS[el.dataset.f] || "";
+    const line = el.closest("[data-line]");
+    if (v) el.textContent = v;
+    else if (line) line.hidden = true;
+  });
+
+  function openFromHash() {
+    const id = location.hash.slice(1);
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === "DETAILS") el.open = true;
+    el.scrollIntoView({ block: "start" });
+  }
+  window.addEventListener("hashchange", openFromHash);
+  openFromHash();
+
+  if (CONTACT_EMAIL) {
+    const code = document.createElement("code");
+    code.id = "contact-email";
+    code.textContent = CONTACT_EMAIL;
+    const btn = document.createElement("button");
+    btn.className = "copy";
+    btn.id = "copy-email";
+    btn.type = "button";
+    btn.textContent = "Copier";
+    btn.addEventListener("click", () => {
+      const done = () => { status.textContent = "Adresse copiée."; };
+      const fallback = () => {
+        const r = document.createRange();
+        r.selectNodeContents(code);
+        const s = window.getSelection();
+        s.removeAllRanges(); s.addRange(r);
+        status.textContent = "Adresse sélectionnée : copiez-la avec votre clavier.";
+      };
+      try {
+        navigator.clipboard.writeText(CONTACT_EMAIL).then(done, fallback);
+      } catch (e) { fallback(); }
+    });
+    box.append(code, btn);
+  } else {
+    const p = document.createElement("p");
+    p.textContent = "L'adresse de commande sera affichée ici à l'ouverture du service.";
+    p.className = "fineprint";
+    box.append(p);
+  }
+</script>
+
+</body>
+</html>
