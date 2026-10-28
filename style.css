@@ -54,6 +54,7 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 .btn.plain:hover { color: var(--blue-dark); }
 
 /* Hero */
+.hero { overflow-x: hidden; overflow-x: clip; } /* the tilted stamp must never widen the page on phones */
 .hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; padding-top: 40px; padding-bottom: 80px; }
 .hero-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .hero .lead { font-size: 1.2rem; color: var(--muted); max-width: 30em; }
@@ -175,8 +176,44 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 .legal .version { font-size: 0.9rem; }
 .legal nav { display: flex; flex-wrap: wrap; gap: 8px 20px; font-weight: 700; }
 
+/* Trade pages */
+.hero.solo .wrap { grid-template-columns: 1fr; padding-bottom: 64px; }
+.hero.solo .hero-text { max-width: 46em; }
+.hero.solo h1 { font-size: clamp(2rem, 5.2vw, 3.3rem); }
+.crumbs { font-size: 0.92rem; color: var(--muted); }
+.crumbs a { color: var(--muted); }
+.criteria { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 48px; max-width: 980px; }
+.criteria li { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid var(--ink); }
+.criteria p { color: var(--muted); }
+#criteres .fine { margin-top: 36px; }
+.pitfalls { list-style: none; margin: 0; padding: 0; max-width: 760px; border-top: 1px solid var(--rule); }
+.pitfalls li { position: relative; padding: 16px 0 16px 38px; border-bottom: 1px solid var(--rule); color: var(--muted); }
+.pitfalls li::before {
+  content: "!"; position: absolute; left: 0; top: 17px; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--highlight); color: var(--ink); font-weight: 800; font-size: 0.9rem; line-height: 24px; text-align: center;
+}
+.pitfalls strong { color: var(--ink); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.two .offer { margin-top: 28px; }
+.checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.checklist li { position: relative; padding-left: 30px; }
+.checklist li::before {
+  content: ""; position: absolute; left: 2px; top: 0.45em; width: 12px; height: 7px;
+  border-left: 2.5px solid var(--blue); border-bottom: 2.5px solid var(--blue); transform: rotate(-45deg);
+}
+.trades { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; max-width: 980px; }
+.trades a {
+  display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 18px 20px;
+  background: #fff; border: 1px solid var(--rule); border-radius: 8px; color: var(--ink); text-decoration: none;
+}
+.trades a:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+.trades b { color: var(--blue); font-weight: 700; font-size: 1.08rem; }
+.trades span { color: var(--muted); font-size: 0.95rem; }
+
 @media (max-width: 880px) {
   .hero .wrap { grid-template-columns: 1fr; gap: 48px; padding-top: 24px; padding-bottom: 64px; }
+  .criteria, .two { grid-template-columns: 1fr; }
+  .two { gap: 48px; }
   .pli { max-width: 420px; }
   .steps { grid-template-columns: 1fr; gap: 26px; }
   .example { grid-template-columns: 1fr; gap: 28px; }
