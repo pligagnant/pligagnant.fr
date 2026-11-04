@@ -1,12 +1,12 @@
-/* Pli Gagnant: one ink blue for actions, kraft for the envelope, highlighter yellow for what the reader must notice. */
+/* Pli: ink for text, one blue for actions, highlighter yellow for what the reader must notice. Same palette as accueil.css. */
 :root {
-  --ink: #16202E;
-  --muted: #4F5B6B;
+  --ink: #0F1B3D;
+  --muted: #4A5675;
   --paper: #FFFFFF;
-  --band: #EEF1F5;
-  --rule: #D5DBE3;
-  --blue: #2340B8;
-  --blue-dark: #182F8C;
+  --band: #F4F6FB;
+  --rule: #D5DBEA;
+  --blue: #2F55E4;
+  --blue-dark: #2347C8;
   --kraft: #D6B37C;
   --kraft-dark: #B88F55;
   --highlight: #FFE45C;
@@ -39,6 +39,7 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 800; font-stretch: 115%; font-size: 1.2rem; letter-spacing: -0.01em; }
 .brand svg { width: 30px; height: 22px; flex: none; }
+.brand svg.logo { width: 41px; height: 28px; }
 .top .link { font-weight: 700; text-decoration: none; }
 .top .link:hover { text-decoration: underline; }
 

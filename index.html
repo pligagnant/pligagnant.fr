@@ -8,15 +8,23 @@
 <link rel="canonical" href="https://pligagnant.fr/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Pli Gagnant">
 <meta property="og:url" content="https://pligagnant.fr/">
 <meta property="og:title" content="Pli Gagnant · Votre mémoire technique en 72 heures">
 <meta property="og:description" content="Envoyez l'appel d'offres et vos références, recevez un mémoire Word prêt à déposer. Le premier n'est payé que s'il vous convient.">
-<meta name="theme-color" content="#2340B8">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232340B8'/%3E%3Crect x='6' y='9' width='20' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2.2'/%3E%3Cpath d='M6.5 10l9.5 7 9.5-7' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta property="og:image" content="https://pligagnant.fr/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pli : votre mémoire technique, rédigé sur mesure en 72 heures.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1B3D">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/accueil.css">
 <script>
   // Old links to the legal sections (#cgv, #confidentialite, #mentions-legales) now live on legal.html.
   (function () {
@@ -29,141 +37,160 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./" aria-label="Pli Gagnant, accueil">
-      <svg viewBox="0 0 30 22" aria-hidden="true"><rect x="1.5" y="1.5" width="27" height="19" rx="2.5" fill="#D6B37C" stroke="#16202E" stroke-width="2"/><path d="M2.5 3l12.5 9 12.5-9" fill="none" stroke="#16202E" stroke-width="2" stroke-linejoin="round"/></svg>
-      Pli Gagnant
+    <a class="brand" href="/" aria-label="Pli Gagnant, accueil">
+      <svg viewBox="0 0 147 100" aria-hidden="true"><path fill-rule="evenodd" fill="#0F1B3D" d="M3 0H55L76 21V40A24 24 0 0 1 52 64H24V97A3 3 0 0 1 21 100H3A3 3 0 0 1 0 97V3A3 3 0 0 1 3 0ZM24 21H55V35A8 8 0 0 1 47 43H24Z"/><path fill="#2F55E4" d="M55 0V21H76Z"/><rect x="87" y="0" width="24" height="100" rx="3" fill="#0F1B3D"/><rect x="123" y="0" width="24" height="24" rx="3" fill="#2F55E4"/><rect x="123" y="33" width="24" height="67" rx="3" fill="#0F1B3D"/></svg>
     </a>
-    <nav class="top-nav" aria-label="Accès rapide">
-      <a class="link" href="/ma-veille/">Ma veille</a>
-      <a class="link wide" href="#commander">Envoyer un dossier</a>
+    <nav class="menu" aria-label="Menu principal">
+      <a href="#methode">Méthode</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#veille">Veille gratuite</a>
+      <a href="#questions">Questions</a>
     </nav>
+    <div class="top-end">
+      <a class="quiet" href="/ma-veille/">Ma veille</a>
+      <a class="btn small" href="#gratuit">Analyse gratuite</a>
+    </div>
   </div>
 </header>
 
 <main>
   <section class="hero">
-    <div class="wrap">
+    <div class="wrap hero-in">
       <div class="hero-text">
-        <h1>Votre mémoire technique, rédigé sur mesure en 72&nbsp;heures.</h1>
-        <p class="lead">Envoyez-nous l'appel d'offres et vos références. Vous recevez un mémoire Word construit sur la grille de notation de l'acheteur, prêt à relire et à déposer.</p>
+        <span class="eyebrow">Mémoires techniques · marchés publics</span>
+        <h1>Votre mémoire technique, <span class="accent">rédigé pour vous</span> en 72&nbsp;heures.</h1>
+        <p class="lead">Envoyez l'appel d'offres et vos références&nbsp;: vous recevez un mémoire Word construit sur la grille de notation de l'acheteur, prêt à relire et à déposer.</p>
         <div class="actions">
-          <a class="btn" href="#commander">Envoyer mon dossier</a>
-          <a class="btn plain" href="#tarifs">Voir les tarifs</a>
+          <a class="btn" href="#gratuit">Recevoir l'analyse gratuite
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn outline" href="#methode">Comment ça marche</a>
         </div>
-        <p class="reassure">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#FFE45C"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#16202E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          400&nbsp;€&nbsp;HT le mémoire, et le premier n'est payé que s'il vous convient.
-        </p>
+        <p class="small-note">Réponse sous 24&nbsp;h ouvrées. Sans engagement.</p>
       </div>
 
-      <div class="pli" aria-hidden="true">
-        <div class="pli-body">
-          <div class="pli-label">
-            <span><b>Offre pour&nbsp;:</b> entretien des espaces verts des écoles, lot 2</span>
-            <span><b>Contient&nbsp;:</b> mémoire technique, 18 pages</span>
-            <span class="warn">Ne pas ouvrir avant la séance d'ouverture des plis</span>
+      <div class="memo" aria-hidden="true">
+        <div class="memo-tilt">
+          <div class="memo-page">
+            <span class="memo-kicker">Mémoire technique · Lot 2 · Espaces verts des écoles</span>
+            <span class="memo-rule"></span>
+            <div class="memo-title"><h3>2.1 Tontes et fauchages</h3><span class="pts">25 points</span></div>
+            <p>Le cahier des charges prévoit 14 tontes par an sur 3,2&nbsp;ha de pelouses. Nous les organisons le mercredi et le samedi matin, écoles fermées&nbsp;: aucun engin ne circule pendant la présence des élèves.</p>
+            <p>Chaque passage mobilise deux agents. Une fiche d'intervention datée et photographiée est envoyée le jour même au service technique.</p>
+            <p>Chef d'équipe&nbsp;: <mark>[à compléter&nbsp;: nom et n° Certiphyto]</mark></p>
+            <div class="memo-lines"><span></span><span></span><span></span></div>
           </div>
+          <span class="ready">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7F9BFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            Prêt à déposer
+          </span>
         </div>
-        <div class="stamp">Prêt à déposer</div>
       </div>
+    </div>
+
+    <div class="wrap trust-wrap">
+      <ul class="trust">
+        <li>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+          <span><b>Payé seulement s'il convient</b><small>Pour votre premier mémoire</small></span>
+        </li>
+        <li>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><path d="M7.5 7.5h.01"/></svg></span>
+          <span><b>Prix fixe</b><small>Annoncé avant de commencer</small></span>
+        </li>
+        <li>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span><b>Réponse sous 24&nbsp;h</b><small>Jours ouvrés, sans rendez-vous</small></span>
+        </li>
+      </ul>
     </div>
   </section>
 
-  <section class="section band">
+  <section class="section band" id="methode">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Comment ça marche</h2>
+      <div class="head">
+        <h2>Trois étapes, <span class="accent">sans rendez-vous</span></h2>
+        <p>Tout se fait par email. S'il manque une information, vous recevez des questions précises.</p>
       </div>
       <ol class="steps">
-        <li><span class="n">1</span><h3>Vous envoyez le dossier</h3><p>Par email&nbsp;: règlement de consultation, cahier des charges et vos références.</p></li>
+        <li><span class="n">1</span><h3>Vous envoyez le dossier</h3><p>Règlement de consultation, cahier des charges et vos références&nbsp;: effectifs, matériel, certifications.</p></li>
         <li><span class="n">2</span><h3>Nous rédigeons</h3><p>Le plan suit les critères de notation. Le contenu vient de votre entreprise, pas d'un modèle.</p></li>
         <li><span class="n">3</span><h3>Vous déposez</h3><p>Le fichier Word arrive sous 72&nbsp;h ouvrées. Vous relisez, vous signez, vous déposez.</p></li>
       </ol>
     </div>
   </section>
 
-  <section class="section" id="exemple">
-    <div class="wrap example">
-      <div class="section-head">
-        <h2>Écrit pour ce marché, pas copié-collé</h2>
-        <p>Extrait d'un mémoire pour un marché fictif&nbsp;: l'entretien des espaces verts de cinq écoles.</p>
-        <p class="note"><mark></mark>Ce qui manque n'est jamais inventé. C'est surligné, à compléter avant le dépôt.</p>
-      </div>
-      <article class="sheet" aria-label="Extrait de mémoire">
-        <h3>2.1 Tontes et fauchages <small>25 points</small></h3>
-        <p>Le cahier des charges prévoit 14 tontes par an sur 3,2&nbsp;ha de pelouses. Nous les organisons le mercredi et le samedi matin, écoles fermées&nbsp;: aucun engin ne circule pendant la présence des élèves.</p>
-        <p>Chaque passage mobilise deux agents. Une fiche d'intervention datée et photographiée est envoyée le jour même au service technique.</p>
-        <p>Chef d'équipe&nbsp;: <span class="hl">[à compléter&nbsp;: nom et numéro Certiphyto]</span></p>
-      </article>
-    </div>
-  </section>
-
-  <section class="section band" id="tarifs">
+  <section class="section" id="tarifs">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Tarifs</h2>
-        <p>Un prix fixe, annoncé avant de commencer.</p>
+      <div class="head">
+        <h2>Un prix fixe, <span class="accent">annoncé avant</span></h2>
+        <p>Premier mémoire&nbsp;: vous ne payez que s'il vous convient.</p>
       </div>
-      <ul class="prices">
-        <li>
-          <div class="price-row"><span>Mémoire technique</span><span class="dots"></span><span class="amount">400&nbsp;€ <small>HT</small></span></div>
-          <p>Jusqu'à 25 pages. Livré en 72&nbsp;h ouvrées, une série de corrections.</p>
-        </li>
-        <li>
-          <div class="price-row"><span>Dossier complexe</span><span class="dots"></span><span class="amount">600&nbsp;€ <small>HT</small></span></div>
-          <p>Plusieurs lots ou plus de 25 pages. Livrable en 48&nbsp;h, deux séries de corrections.</p>
-        </li>
-        <li>
-          <div class="price-row"><span>Analyse du dossier et veille des appels d'offres</span><span class="dots"></span><span class="amount">Gratuit</span></div>
-          <p>Notre avis sur une consultation sous 24&nbsp;h ouvrées, et votre page d'appels d'offres triés pour vous, <a href="#veille">mise à jour trois fois par semaine</a>.</p>
-        </li>
-      </ul>
-      <p class="offer">Premier mémoire&nbsp;: vous ne payez que s'il vous convient.</p>
+      <div class="plans">
+        <div class="plan main">
+          <span class="badge">Pour commencer</span>
+          <h3>Mémoire à l'unité</h3>
+          <div class="price"><b>400&nbsp;€</b><span>HT</span></div>
+          <ul class="ticks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Jusqu'à 25 pages</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Livré en 72&nbsp;h ouvrées</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Une série de corrections</li>
+          </ul>
+          <a class="btn" href="#commander">Envoyer mon dossier</a>
+        </div>
+        <div class="plan">
+          <h3>Dossier complexe</h3>
+          <div class="price"><b>600&nbsp;€</b><span>HT</span></div>
+          <ul class="ticks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plusieurs lots ou plus de 25 pages</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Livrable en 48&nbsp;h</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tableau de conformité au CCTP</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Deux séries de corrections</li>
+          </ul>
+          <a class="btn dark" href="#commander">Envoyer mon dossier</a>
+        </div>
+      </div>
       <p class="fine">Prix en euros. TVA non applicable, article 293 B du CGI. Paiement par carte bancaire (Stripe) ou par virement. Annulation gratuite jusqu'à la livraison. Détails dans les <a href="legal.html#cgv">conditions de vente</a>.</p>
     </div>
   </section>
 
-  <section class="section veille" id="veille">
-    <div class="wrap two">
-      <div class="veille-text">
-        <div class="section-head">
-          <p class="kicker">Gratuit, sans engagement</p>
-          <h2>Les appels d'offres de votre métier, triés pour vous</h2>
-          <p>Nous vous préparons une page personnelle avec les consultations ouvertes dans votre métier et vos départements. Pour chacune, notre avis franc&nbsp;: à tenter, à regarder de près ou à laisser passer, et pourquoi.</p>
-        </div>
-        <ul class="checklist">
-          <li>Mise à jour le lundi, le mercredi et le vendredi.</li>
-          <li>Un résumé par email chaque lundi.</li>
-          <li>Pour changer de métier, de départements ou arrêter, il suffit de nous répondre.</li>
-        </ul>
-        <div class="actions">
-          <a class="btn" href="mailto:contact@pligagnant.fr?subject=VEILLE&amp;body=Bonjour%2C%0A%0AJe%20souhaite%20recevoir%20la%20veille%20gratuite%20des%20appels%20d'offres.%0A%0AEntreprise%20%3A%20%0AM%C3%A9tier%20%3A%20%0AD%C3%A9partements%20%3A%20%0A">Demander ma veille</a>
-          <a class="btn plain" href="/ma-veille/">J'ai déjà un code</a>
-        </div>
+  <section class="section band" id="gratuit">
+    <div class="wrap">
+      <div class="head">
+        <h2>Commencez <span class="accent">gratuitement</span></h2>
+        <p>Deux façons de tester Pli sans rien payer.</p>
       </div>
-      <div class="veille-demo" aria-hidden="true">
-        <div class="v-card v-tenter">
-          <div class="v-top"><span class="v-badge">À tenter</span><span class="neuf">Nouveau</span></div>
-          <h3>Commune de Saint-Exemple</h3>
-          <p class="v-objet">Entretien des espaces verts des écoles, 3 ans</p>
-          <div class="v-avis"><b>Notre avis&nbsp;:</b> votre métier, à 20&nbsp;km de chez vous, et la valeur technique pèse 60&nbsp;% de la note.</div>
+      <div class="free">
+        <div class="free-card blue">
+          <span class="chip">Sous 24 h ouvrées</span>
+          <h3>Analyse gratuite de votre appel d'offres</h3>
+          <p>Envoyez le dossier de consultation. Nous vous disons s'il vaut la peine d'y répondre&nbsp;: critères et pondérations, pièces exigées, points bloquants. Sans engagement, même si vous rédigez ensuite vous-même.</p>
+          <a class="btn white" href="#commander" data-demande="analyse">Envoyer mon appel d'offres
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
-        <div class="v-card v-passer">
-          <div class="v-top"><span class="v-badge">À laisser passer</span></div>
-          <h3>Département d'Exemple</h3>
-          <p class="v-objet">Accord-cadre pour 42 collèges, lot unique</p>
-          <div class="v-avis"><b>Notre avis&nbsp;:</b> un seul lot, taillé pour les grands groupes.</div>
-        </div>
-        <p class="demo-note">Exemple fictif</p>
+        <form class="free-card light" id="veille" novalidate>
+          <span class="chip">Lundi, mercredi, vendredi</span>
+          <h3>Veille gratuite des appels d'offres</h3>
+          <p>Une page à votre nom avec les consultations ouvertes dans votre métier et vos départements, et notre avis sur chacune. Mise à jour trois fois par semaine, avec un résumé par email le lundi.</p>
+          <div class="fields">
+            <label class="field full">Entreprise<input type="text" name="entreprise" autocomplete="organization"></label>
+            <label class="field">Votre métier<input type="text" name="metier" placeholder="Ex. : espaces verts"></label>
+            <label class="field">Départements<input type="text" name="departements" placeholder="Ex. : 78, 92, 95"></label>
+          </div>
+          <div class="form-row">
+            <button class="btn dark" type="submit">Demander ma veille</button>
+            <a class="text-link" href="/ma-veille/">J'ai déjà un code</a>
+          </div>
+          <p class="status" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Questions fréquentes</h2>
-      </div>
+  <section class="section" id="questions">
+    <div class="wrap faq-in">
+      <div class="head"><h2>Questions fréquentes</h2></div>
       <div class="faq">
         <details>
           <summary>Que dois-je envoyer&nbsp;?</summary>
@@ -179,7 +206,7 @@
         </details>
         <details>
           <summary>Je n'ai pas d'appel d'offres en ce moment</summary>
-          <p>Demandez votre <a href="#veille">veille gratuite</a>&nbsp;: écrivez-nous «&nbsp;VEILLE&nbsp;» avec votre métier et vos départements, et nous vous préparons une page avec les consultations ouvertes qui vous correspondent, triées avec notre avis. Pour arrêter, répondez «&nbsp;STOP&nbsp;».</p>
+          <p>Demandez votre <a href="#veille">veille gratuite</a>&nbsp;: une page à votre nom avec les consultations ouvertes dans votre métier et vos départements, mise à jour le lundi, le mercredi et le vendredi. Pour arrêter, répondez «&nbsp;STOP&nbsp;».</p>
         </details>
         <details>
           <summary>Faut-il prendre rendez-vous&nbsp;?</summary>
@@ -189,39 +216,73 @@
     </div>
   </section>
 
-  <section class="section band" id="metiers">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Mémoire technique par métier</h2>
-        <p>Ce que l'acheteur note dans votre métier, les erreurs qui coûtent des points, et un extrait d'exemple.</p>
-      </div>
-      <ul class="trades">
-        <li><a href="/memoire-technique-espaces-verts/"><b>Espaces verts</b><span>Entretien de parcs, d'écoles, de cimetières</span></a></li>
-        <li><a href="/memoire-technique-nettoyage/"><b>Nettoyage et propreté</b><span>Bureaux, écoles, gymnases, vitrerie</span></a></li>
-        <li><a href="/memoire-technique-second-oeuvre/"><b>Second œuvre du bâtiment</b><span>Peinture, plâtrerie, menuiserie, électricité, plomberie</span></a></li>
-        <li><a href="/memoire-technique-vrd-voirie/"><b>VRD et voirie</b><span>Chaussées, réseaux, assainissement</span></a></li>
-        <li><a href="/memoire-technique-maintenance-securite/"><b>Maintenance et sécurité</b><span>Multitechnique, sécurité incendie, gardiennage</span></a></li>
-      </ul>
-    </div>
-  </section>
-
   <section class="order" id="commander">
-    <div class="wrap">
-      <h2>Envoyez votre dossier</h2>
-      <p>Nous répondons sous 24&nbsp;h ouvrées avec l'analyse du marché et la date de livraison.</p>
-      <span class="mail" id="mail">contact@pligagnant.fr</span>
-      <div class="actions">
-        <a class="btn" href="mailto:contact@pligagnant.fr?subject=M%C3%A9moire%20%3A%20nom%20du%20march%C3%A9%2C%20date%20limite">Écrire un email</a>
-        <button class="btn ghost" type="button" id="copy">Copier l'adresse</button>
+    <div class="wrap order-in">
+      <div class="order-text">
+        <h2>Envoyez <span class="accent">votre dossier</span></h2>
+        <p>Nous répondons sous 24&nbsp;h ouvrées avec l'analyse du marché et la date de livraison.</p>
+        <div class="mail-line">
+          <a href="mailto:contact@pligagnant.fr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></svg><span id="mail">contact@pligagnant.fr</span></a>
+          <button class="copy" type="button" id="copy">Copier l'adresse</button>
+        </div>
+        <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
       </div>
-      <p class="status" id="status" role="status" aria-live="polite"></p>
-      <p class="hint">Objet conseillé&nbsp;: «&nbsp;Mémoire&nbsp;: nom du marché, date limite&nbsp;». Joignez les pièces en PDF ou Word (pas d'archive ZIP)&nbsp;; si elles sont lourdes, envoyez-les en plusieurs emails.</p>
+
+      <form class="order-form" id="dossier" novalidate>
+        <div class="fields">
+          <label class="field">Nom et prénom<input type="text" name="nom" autocomplete="name"></label>
+          <label class="field">Entreprise<input type="text" name="entreprise" autocomplete="organization"></label>
+          <label class="field"><span>Téléphone <span class="opt">(facultatif)</span></span><input type="tel" name="telephone" autocomplete="tel"></label>
+          <label class="field">Votre demande
+            <select name="demande">
+              <option value="memoire">Rédaction du mémoire</option>
+              <option value="analyse">Analyse gratuite</option>
+            </select>
+          </label>
+          <label class="field">Marché concerné<input type="text" name="marche" placeholder="Ex. : espaces verts, lot 2"></label>
+          <label class="field">Date limite de dépôt<input type="date" name="date"></label>
+          <label class="field full"><span>Message <span class="opt">(facultatif)</span></span><textarea name="message" rows="3"></textarea></label>
+        </div>
+        <div class="attach">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg>
+          <div><b>Votre messagerie s'ouvre avec le message prêt&nbsp;: joignez-y vos fichiers.</b><span>Règlement de consultation, cahier des charges et vos références, en PDF ou Word (pas d'archive ZIP). Fichiers lourds&nbsp;: envoyez-les en plusieurs emails.</span></div>
+        </div>
+        <button class="btn block" type="submit">Envoyer mon dossier</button>
+        <p class="status" role="status" aria-live="polite"></p>
+        <p class="legal-note">Vos informations servent à traiter votre demande. Voir notre <a href="legal.html#confidentialite">politique de confidentialité</a>.</p>
+      </form>
     </div>
   </section>
 </main>
 
 <footer class="foot">
-  <div class="wrap">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <svg viewBox="0 0 147 100" role="img" aria-label="Pli"><path fill-rule="evenodd" fill="#FFFFFF" d="M3 0H55L76 21V40A24 24 0 0 1 52 64H24V97A3 3 0 0 1 21 100H3A3 3 0 0 1 0 97V3A3 3 0 0 1 3 0ZM24 21H55V35A8 8 0 0 1 47 43H24Z"/><path fill="#7F9BFF" d="M55 0V21H76Z"/><rect x="87" y="0" width="24" height="100" rx="3" fill="#FFFFFF"/><rect x="123" y="0" width="24" height="24" rx="3" fill="#7F9BFF"/><rect x="123" y="33" width="24" height="67" rx="3" fill="#FFFFFF"/></svg>
+      <span>Mémoires techniques pour les marchés publics.</span>
+    </div>
+    <nav class="foot-col" aria-label="Pli">
+      <b>Pli</b>
+      <a href="#methode">Méthode</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#veille">Veille gratuite</a>
+      <a href="/ma-veille/">Ma veille</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <nav class="foot-col" aria-label="Métiers">
+      <b>Métiers</b>
+      <a href="/memoire-technique-espaces-verts/">Espaces verts</a>
+      <a href="/memoire-technique-nettoyage/">Nettoyage et propreté</a>
+      <a href="/memoire-technique-second-oeuvre/">Second œuvre</a>
+      <a href="/memoire-technique-vrd-voirie/">VRD et voirie</a>
+      <a href="/memoire-technique-maintenance-securite/">Maintenance et sécurité</a>
+    </nav>
+    <div class="foot-col">
+      <b>Contact</b>
+      <a href="mailto:contact@pligagnant.fr">contact@pligagnant.fr</a>
+    </div>
+  </div>
+  <div class="wrap foot-legal">
     <span>Pli Gagnant, entrepreneur individuel, SIRET 977 494 913 00022</span>
     <nav aria-label="Informations légales">
       <a href="legal.html#cgv">Conditions de vente</a>
@@ -233,11 +294,73 @@
 
 <script>
   (function () {
+    var ADDRESS = "contact@pligagnant.fr";
+
+    function openMail(subject, lines) {
+      var body = lines.join("\r\n");
+      window.location.href = "mailto:" + ADDRESS + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    }
+    function val(form, name) {
+      var el = form.elements[name];
+      return el ? el.value.trim() : "";
+    }
+    function frDate(iso) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+      return m ? m[3] + "/" + m[2] + "/" + m[1] : iso;
+    }
+    var FALLBACK = " Rien ne s'est ouvert ? Écrivez-nous à " + ADDRESS + ".";
+
+    // Free tender watch: same email as before (subject VEILLE), now pre-filled.
+    var veille = document.getElementById("veille");
+    veille.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      openMail("VEILLE", [
+        "Bonjour,",
+        "",
+        "Je souhaite recevoir la veille gratuite des appels d'offres.",
+        "",
+        "Entreprise : " + val(veille, "entreprise"),
+        "Métier : " + val(veille, "metier"),
+        "Départements : " + val(veille, "departements"),
+        ""
+      ]);
+      veille.querySelector(".status").textContent = "Votre messagerie s'ouvre avec la demande prête : il ne reste qu'à l'envoyer." + FALLBACK;
+    });
+
+    // Order form: builds the email; the client attaches the files in their own mail app.
+    var dossier = document.getElementById("dossier");
+    var demande = dossier.elements["demande"];
+    document.querySelectorAll('[data-demande="analyse"]').forEach(function (a) {
+      a.addEventListener("click", function () { demande.value = "analyse"; });
+    });
+    dossier.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var analyse = demande.value === "analyse";
+      var marche = val(dossier, "marche") || "nom du marché";
+      var date = val(dossier, "date") ? frDate(val(dossier, "date")) : "";
+      var subject = (analyse ? "Analyse gratuite : " : "Mémoire : ") + marche + (date ? ", date limite " + date : "");
+      var lines = [
+        "Bonjour,",
+        "",
+        analyse ? "Je souhaite votre analyse gratuite de cet appel d'offres." : "Je souhaite que vous rédigiez le mémoire technique de cet appel d'offres.",
+        "",
+        "Nom : " + val(dossier, "nom"),
+        "Entreprise : " + val(dossier, "entreprise"),
+        "Téléphone : " + val(dossier, "telephone"),
+        "Marché : " + val(dossier, "marche"),
+        "Date limite de dépôt : " + date
+      ];
+      if (val(dossier, "message")) { lines.push("", val(dossier, "message")); }
+      lines.push("", "Je joins le règlement de consultation, le cahier des charges et nos références.", "");
+      openMail(subject, lines);
+      dossier.querySelector(".status").textContent = "Votre messagerie s'ouvre avec le message prêt : joignez vos fichiers puis envoyez." + FALLBACK;
+    });
+
+    // Copy the address, for people without a mail app on this device.
     var btn = document.getElementById("copy");
-    var status = document.getElementById("status");
+    var status = document.getElementById("copy-status");
     var mail = document.getElementById("mail");
     btn.addEventListener("click", function () {
-      var text = mail.textContent.trim();
       function done() { status.textContent = "Adresse copiée."; }
       function fallback() {
         var r = document.createRange();
@@ -245,11 +368,9 @@
         var s = window.getSelection();
         s.removeAllRanges();
         s.addRange(r);
-        status.textContent = "Adresse sélectionnée : copiez-la avec votre clavier.";
+        status.textContent = "Adresse sélectionnée : copiez-la avec votre clavier.";
       }
-      try {
-        navigator.clipboard.writeText(text).then(done, fallback);
-      } catch (e) { fallback(); }
+      try { navigator.clipboard.writeText(ADDRESS).then(done, fallback); } catch (e) { fallback(); }
     });
   })();
 </script>
