@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pli Gagnant · Votre mémoire technique en 72 heures</title>
-<meta name="description" content="Votre mémoire technique pour les marchés publics, construit sur la grille de notation et livré en 72 h. 400 € HT, le premier payé seulement s'il vous convient.">
+<meta name="description" content="Votre mémoire technique pour les marchés publics, construit sur la grille de notation et livré en 72 h. 390 € HT, le premier payé seulement s'il vous convient.">
 <link rel="canonical" href="https://pligagnant.fr/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
@@ -130,7 +130,7 @@
         <div class="plan main">
           <span class="badge">Pour commencer</span>
           <h3>Mémoire à l'unité</h3>
-          <div class="price"><b>400&nbsp;€</b><span>HT</span></div>
+          <div class="price"><b>390&nbsp;€</b><span>HT</span></div>
           <ul class="ticks">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Jusqu'à 25 pages</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Livré en 72&nbsp;h ouvrées</li>
@@ -140,7 +140,7 @@
         </div>
         <div class="plan">
           <h3>Dossier complexe</h3>
-          <div class="price"><b>600&nbsp;€</b><span>HT</span></div>
+          <div class="price"><b>590&nbsp;€</b><span>HT</span></div>
           <ul class="ticks">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plusieurs lots ou plus de 25 pages</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Livrable en 48&nbsp;h</li>
@@ -149,8 +149,18 @@
           </ul>
           <a class="btn dark" href="#commander">Envoyer mon dossier</a>
         </div>
+        <div class="plan">
+          <h3>Abonnement</h3>
+          <div class="price"><b>1&nbsp;290&nbsp;€</b><span>HT par mois</span></div>
+          <ul class="ticks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>5 mémoires par mois</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Jusqu'à 25 pages chacun</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Sans engagement</li>
+          </ul>
+          <a class="btn dark" href="#commander" data-demande="abonnement">Choisir l'abonnement</a>
+        </div>
       </div>
-      <p class="fine">Prix en euros. TVA non applicable, article 293 B du CGI. Paiement par carte bancaire (Stripe) ou par virement. Annulation gratuite jusqu'à la livraison. Détails dans les <a href="legal.html#cgv">conditions de vente</a>.</p>
+      <p class="fine">Prix en euros. TVA non applicable, article 293 B du CGI. Paiement par carte bancaire (Stripe) ou par virement. L'abonnement se règle chaque mois par carte bancaire. Annulation gratuite jusqu'à la livraison. Détails dans les <a href="legal.html#cgv">conditions de vente</a>.</p>
     </div>
   </section>
 
@@ -237,6 +247,7 @@
             <select name="demande">
               <option value="memoire">Rédaction du mémoire</option>
               <option value="analyse">Analyse gratuite</option>
+              <option value="abonnement">Abonnement (5 mémoires par mois)</option>
             </select>
           </label>
           <label class="field">Marché concerné<input type="text" name="marche" placeholder="Ex. : espaces verts, lot 2"></label>
@@ -330,19 +341,22 @@
     // Order form: builds the email; the client attaches the files in their own mail app.
     var dossier = document.getElementById("dossier");
     var demande = dossier.elements["demande"];
-    document.querySelectorAll('[data-demande="analyse"]').forEach(function (a) {
-      a.addEventListener("click", function () { demande.value = "analyse"; });
+    document.querySelectorAll("[data-demande]").forEach(function (a) {
+      a.addEventListener("click", function () { demande.value = a.getAttribute("data-demande"); });
     });
     dossier.addEventListener("submit", function (ev) {
       ev.preventDefault();
       var analyse = demande.value === "analyse";
+      var abonnement = demande.value === "abonnement";
       var marche = val(dossier, "marche") || "nom du marché";
       var date = val(dossier, "date") ? frDate(val(dossier, "date")) : "";
-      var subject = (analyse ? "Analyse gratuite : " : "Mémoire : ") + marche + (date ? ", date limite " + date : "");
+      var subject = abonnement ? "Abonnement : " + (val(dossier, "entreprise") || "votre entreprise")
+        : (analyse ? "Analyse gratuite : " : "Mémoire : ") + marche + (date ? ", date limite " + date : "");
       var lines = [
         "Bonjour,",
         "",
-        analyse ? "Je souhaite votre analyse gratuite de cet appel d'offres." : "Je souhaite que vous rédigiez le mémoire technique de cet appel d'offres.",
+        abonnement ? "Je souhaite souscrire l'abonnement à 1 290 € HT par mois (5 mémoires par mois)."
+          : analyse ? "Je souhaite votre analyse gratuite de cet appel d'offres." : "Je souhaite que vous rédigiez le mémoire technique de cet appel d'offres.",
         "",
         "Nom : " + val(dossier, "nom"),
         "Entreprise : " + val(dossier, "entreprise"),
