@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /v/
 Allow: /
 
 Sitemap: https://pligagnant.fr/sitemap.xml
