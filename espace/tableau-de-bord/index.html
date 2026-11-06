@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://wvtiadlhjsozepqenotq.supabase.co wss://wvtiadlhjsozepqenotq.supabase.co; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Tableau de bord · Pli Gagnant</title>
+<meta name="description" content="Votre tableau de bord Pli Gagnant : vos appels d'offres, de l'opportunité au résultat.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F1B3D">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/espace/espace.css?v=1">
+</head>
+<body>
+
+<header class="esp-top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Pli Gagnant, accueil"><svg class="logo" viewBox="0 0 147 100" aria-hidden="true"><path fill-rule="evenodd" fill="#0F1B3D" d="M3 0H55L76 21V40A24 24 0 0 1 52 64H24V97A3 3 0 0 1 21 100H3A3 3 0 0 1 0 97V3A3 3 0 0 1 3 0ZM24 21H55V35A8 8 0 0 1 47 43H24Z"/><path fill="#2F55E4" d="M55 0V21H76Z"/><rect x="87" y="0" width="24" height="100" rx="3" fill="#0F1B3D"/><rect x="123" y="0" width="24" height="24" rx="3" fill="#2F55E4"/><rect x="123" y="33" width="24" height="67" rx="3" fill="#0F1B3D"/></svg><span>Espace client</span></a>
+    <nav class="esp-nav" aria-label="Espace client"><span class="qui" id="qui"></span><button type="button" id="b-compte">Mon compte</button><button type="button" id="b-deconnexion">Se déconnecter</button></nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <section class="esp-hello" aria-live="polite">
+    <div class="wrap" id="hello"><p class="chargement">Chargement de votre espace…</p></div>
+  </section>
+  <section class="esp-corps" id="corps" hidden>
+    <div class="wrap">
+      <div class="esp-barre">
+        <div class="onglets" role="tablist" aria-label="Vos appels d'offres" id="onglets"></div>
+        <button type="button" class="btn petit blanc" id="b-ajouter">+ Ajouter un appel d'offres</button>
+      </div>
+      <div id="guide"></div>
+      <div id="panneau" role="tabpanel" tabindex="-1"></div>
+      <p class="esp-pied">Nos avis sont indicatifs&nbsp;: lisez toujours le règlement de consultation avant de décider. Une question&nbsp;? Écrivez-nous à <a href="mailto:contact@pligagnant.fr">contact@pligagnant.fr</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Pli Gagnant, entrepreneur individuel, SIRET 977 494 913 00022</span>
+    <nav aria-label="Informations légales">
+      <a href="/legal.html#cgv">Conditions de vente</a>
+      <a href="/legal.html#confidentialite">Confidentialité</a>
+      <a href="/legal.html#mentions-legales">Mentions légales</a>
+    </nav>
+  </div>
+</footer>
+<script src="/espace/config.js?v=1"></script>
+<script src="/espace/supabase.js?v=1"></script>
+<script src="/espace/commun.js?v=1"></script>
+<script src="/espace/tableau.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+/* Adresse publique du service de comptes. La clé est publique par nature : les règles d'accès sont dans la base. */
+window.PG_CONFIG = {"url": "https://wvtiadlhjsozepqenotq.supabase.co", "cle": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2dGlhZGxoanNvemVwcWVub3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5NDM4OTIsImV4cCI6MjEwOTUxOTg5Mn0.9Z5QWQYlFWsxM5WPkvt5HI2Aykdy7HCUfOTOrEGQOsY"};

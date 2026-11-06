@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /v/
+Disallow: /espace/bienvenue/
+Disallow: /espace/tableau-de-bord/
 Allow: /
 
 Sitemap: https://pligagnant.fr/sitemap.xml

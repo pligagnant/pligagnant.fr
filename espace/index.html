@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://wvtiadlhjsozepqenotq.supabase.co wss://wvtiadlhjsozepqenotq.supabase.co; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Espace client · Pli Gagnant</title>
+<meta name="description" content="Connectez-vous à votre espace client Pli Gagnant pour suivre vos appels d'offres.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0F1B3D">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/espace/espace.css?v=1">
+</head>
+<body>
+
+<header class="esp-top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Pli Gagnant, accueil"><svg class="logo" viewBox="0 0 147 100" aria-hidden="true"><path fill-rule="evenodd" fill="#0F1B3D" d="M3 0H55L76 21V40A24 24 0 0 1 52 64H24V97A3 3 0 0 1 21 100H3A3 3 0 0 1 0 97V3A3 3 0 0 1 3 0ZM24 21H55V35A8 8 0 0 1 47 43H24Z"/><path fill="#2F55E4" d="M55 0V21H76Z"/><rect x="87" y="0" width="24" height="100" rx="3" fill="#0F1B3D"/><rect x="123" y="0" width="24" height="24" rx="3" fill="#2F55E4"/><rect x="123" y="33" width="24" height="67" rx="3" fill="#0F1B3D"/></svg><span>Espace client</span></a>
+    <nav class="esp-nav" aria-label="Espace client"><a href="/">Retour au site</a></nav>
+  </div>
+</header>
+
+<main class="esp-auth">
+  <div class="wrap">
+    <section class="carte" aria-labelledby="titre">
+      <p class="kicker">Espace client</p>
+      <h1 id="titre">Connexion</h1>
+      <p class="msg ok" id="info" role="status"></p>
+      <form id="f-connexion" class="form-pile" novalidate>
+        <div class="champ"><label for="email">Adresse email</label>
+          <input id="email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" required></div>
+        <div class="champ"><label for="mdp">Mot de passe</label>
+          <div class="mdp"><input id="mdp" name="password" type="password" autocomplete="current-password" required><button type="button" aria-pressed="false" aria-label="Afficher le mot de passe">Afficher</button></div></div>
+        <button class="btn" type="submit">Se connecter</button>
+        <p class="msg" id="msg-connexion" role="alert"></p>
+      </form>
+      <button type="button" class="lien" id="vers-oubli">Mot de passe oublié ou première connexion&nbsp;?</button>
+      <form id="f-oubli" class="form-pile" hidden novalidate>
+        <p class="intro">Indiquez votre adresse email&nbsp;: nous vous envoyons un lien pour choisir votre mot de passe.</p>
+        <div class="champ"><label for="email-oubli">Adresse email</label>
+          <input id="email-oubli" type="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" required></div>
+        <button class="btn" type="submit">Recevoir le lien</button>
+        <p class="msg" id="msg-oubli" role="status"></p>
+        <button type="button" class="lien" id="vers-connexion">Retour à la connexion</button>
+      </form>
+    </section>
+
+    <aside>
+      <h2>Tous vos appels d'offres au même endroit</h2>
+      <ul class="checklist">
+        <li>Les consultations repérées pour vous dans votre métier, avec notre avis franc.</li>
+        <li>Celles que vous préparez, et l'avancement du mémoire quand nous le rédigeons.</li>
+        <li>Celles que vous avez déposées, jusqu'au résultat.</li>
+      </ul>
+      <p>Pas encore de compte&nbsp;? L'espace est ouvert à nos clients et aux abonnés de la <a href="/ma-veille/">veille gratuite</a>. Écrivez-nous à <a href="mailto:contact@pligagnant.fr?subject=Acc%C3%A8s%20%C3%A0%20l'espace%20client">contact@pligagnant.fr</a>&nbsp;: nous vous envoyons une invitation.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Pli Gagnant, entrepreneur individuel, SIRET 977 494 913 00022</span>
+    <nav aria-label="Informations légales">
+      <a href="/legal.html#cgv">Conditions de vente</a>
+      <a href="/legal.html#confidentialite">Confidentialité</a>
+      <a href="/legal.html#mentions-legales">Mentions légales</a>
+    </nav>
+  </div>
+</footer>
+<script src="/espace/config.js?v=1"></script>
+<script src="/espace/supabase.js?v=1"></script>
+<script src="/espace/commun.js?v=1"></script>
+<script src="/espace/connexion.js?v=1"></script>
+</body>
+</html>
