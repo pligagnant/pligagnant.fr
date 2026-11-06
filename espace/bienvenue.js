@@ -12,6 +12,9 @@
   var verifie = false;
 
   PG.brancherAffichage(document);
+  // Lien au format par défaut de Supabase : jetons ou erreur dans le fragment (#…).
+  var frag = new URLSearchParams(location.hash.slice(1));
+  if (!type && (frag.get("type") === "invite" || frag.get("type") === "recovery")) type = frag.get("type");
   if (type === "invite") {
     document.getElementById("titre").textContent = "Bienvenue dans votre espace client";
     document.getElementById("intro").textContent = "Choisissez votre mot de passe. Avec votre adresse email, il vous servira à ouvrir votre espace.";
@@ -24,14 +27,30 @@
     document.getElementById("raison-nouveau").textContent = raison;
     document.getElementById("email").focus();
   }
+  var PERIME = "Ce lien n'est plus valable : il ne sert qu'une fois et expire au bout de 24 heures. Recevez-en un nouveau.";
 
-  sb.auth.getSession().then(function (r) {
+  async function demarrer() {
+    if (frag.get("error") || frag.get("error_code")) {
+      history.replaceState(null, "", location.pathname);
+      demanderNouveauLien(PERIME);
+      return;
+    }
+    if (frag.get("access_token") && frag.get("refresh_token")) {
+      var s = await sb.auth.setSession({ access_token: frag.get("access_token"), refresh_token: frag.get("refresh_token") });
+      history.replaceState(null, "", location.pathname);
+      if (s.error || !s.data || !s.data.session) { demanderNouveauLien(PERIME); return; }
+      verifie = true;
+      document.getElementById("identifiant").value = s.data.session.user.email || "";
+      return;
+    }
+    var r = await sb.auth.getSession();
     var session = r.data && r.data.session;
     if (session) { verifie = !jeton; document.getElementById("identifiant").value = session.user.email || ""; }
     if (!jeton && !session) {
       demanderNouveauLien("Ce lien est incomplet. Ouvrez-le directement depuis l'email reçu, ou demandez-en un nouveau ici.");
     }
-  });
+  }
+  demarrer().catch(function () { demanderNouveauLien(PERIME); });
 
   fM.addEventListener("submit", async function (ev) {
     ev.preventDefault();
@@ -46,7 +65,7 @@
         var v = await sb.auth.verifyOtp({ token_hash: jeton, type: type || "recovery" });
         if (v.error) {
           PG.occupe(b, false);
-          demanderNouveauLien("Ce lien n'est plus valable : il ne sert qu'une fois et expire au bout de 24 heures. Recevez-en un nouveau.");
+          demanderNouveauLien(PERIME);
           return;
         }
         verifie = true;
