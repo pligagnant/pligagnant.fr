@@ -141,14 +141,14 @@
         </div>
         <div class="plan">
           <h3>Dossier complexe</h3>
-          <div class="price"><b>590&nbsp;€</b><span>HT</span></div>
+          <div class="price devis"><b>Sur devis</b><span>sous 24&nbsp;h</span></div>
           <ul class="ticks">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plusieurs lots ou plus de 25 pages</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Livrable en 48&nbsp;h</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tableau de conformité au CCTP</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Deux séries de corrections</li>
           </ul>
-          <a class="btn dark" href="#commander">Envoyer mon dossier</a>
+          <a class="btn dark" href="#commander" data-demande="devis">Demander un devis</a>
         </div>
         <div class="plan">
           <h3>Abonnement</h3>
@@ -243,6 +243,7 @@
           <label class="field">Votre demande
             <select name="demande">
               <option value="memoire">Rédaction du mémoire</option>
+              <option value="devis">Devis pour un dossier complexe</option>
               <option value="analyse">Analyse gratuite</option>
               <option value="abonnement">Abonnement (5 mémoires par mois)</option>
             </select>
@@ -345,15 +346,18 @@
       ev.preventDefault();
       var analyse = demande.value === "analyse";
       var abonnement = demande.value === "abonnement";
+      var devis = demande.value === "devis";
       var marche = val(dossier, "marche") || "nom du marché";
       var date = val(dossier, "date") ? frDate(val(dossier, "date")) : "";
       var subject = abonnement ? "Abonnement : " + (val(dossier, "entreprise") || "votre entreprise")
-        : (analyse ? "Analyse gratuite : " : "Mémoire : ") + marche + (date ? ", date limite " + date : "");
+        : (analyse ? "Analyse gratuite : " : devis ? "Devis : " : "Mémoire : ") + marche + (date ? ", date limite " + date : "");
       var lines = [
         "Bonjour,",
         "",
         abonnement ? "Je souhaite souscrire l'abonnement à 1 290 € HT par mois (5 mémoires par mois)."
-          : analyse ? "Je souhaite votre analyse gratuite de cet appel d'offres." : "Je souhaite que vous rédigiez le mémoire technique de cet appel d'offres.",
+          : analyse ? "Je souhaite votre analyse gratuite de cet appel d'offres."
+          : devis ? "Je souhaite un devis pour la rédaction du mémoire technique de ce dossier (plusieurs lots ou plus de 25 pages)."
+          : "Je souhaite que vous rédigiez le mémoire technique de cet appel d'offres.",
         "",
         "Nom : " + val(dossier, "nom"),
         "Entreprise : " + val(dossier, "entreprise"),
