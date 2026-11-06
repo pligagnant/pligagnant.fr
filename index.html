@@ -190,7 +190,7 @@
             <label class="field">Départements<input type="text" name="departements" placeholder="Ex. : 78, 92, 95"></label>
           </div>
           <div class="form-row">
-            <button class="btn dark" type="submit">Demander ma veille</button>
+            <button class="btn dark" type="submit">Créer mon compte gratuit</button>
             <a class="text-link" href="/espace/">J'ai déjà un compte</a>
           </div>
           <p class="status" role="status" aria-live="polite"></p>
@@ -213,11 +213,11 @@
         </details>
         <details>
           <summary>Je n'ai pas d'appel d'offres en ce moment</summary>
-          <p>Demandez votre <a href="#veille">veille gratuite</a>&nbsp;: les consultations ouvertes dans votre métier et vos départements, dans votre espace client, mises à jour le lundi, le mercredi et le vendredi. Pour arrêter, répondez «&nbsp;STOP&nbsp;».</p>
+          <p><a href="/espace/inscription/">Créez votre compte gratuit</a>&nbsp;: les consultations ouvertes dans votre métier et vos départements, dans votre espace client, avec notre avis sur chacune, mises à jour le lundi, le mercredi et le vendredi. Pour arrêter, répondez «&nbsp;STOP&nbsp;» à l'un de nos emails.</p>
         </details>
         <details>
           <summary>Puis-je suivre mes appels d'offres en ligne&nbsp;?</summary>
-          <p>Oui. Chaque client et chaque abonné à la veille a un espace client protégé par un mot de passe&nbsp;: les consultations repérées pour lui, celles qu'il prépare et l'avancement de son mémoire, celles qu'il a déposées et leurs résultats. Il peut y inviter ses collaborateurs. <a href="/espace/">Ouvrir mon espace client</a>.</p>
+          <p>Oui. Chaque client a un espace client protégé par un mot de passe&nbsp;: les consultations repérées pour lui, celles qu'il prépare et l'avancement de son mémoire, celles qu'il a déposées et leurs résultats&nbsp;; il peut y inviter ses collaborateurs. Avec un compte gratuit, vous avez la veille&nbsp;; le suivi s'active avec votre premier mémoire. <a href="/espace/inscription/">Créer mon compte</a> ou <a href="/espace/">me connecter</a>.</p>
         </details>
         <details>
           <summary>Faut-il prendre rendez-vous&nbsp;?</summary>
@@ -323,21 +323,13 @@
     }
     var FALLBACK = " Rien ne s'est ouvert ? Écrivez-nous à " + ADDRESS + ".";
 
-    // Free tender watch: same email as before (subject VEILLE), now pre-filled.
+    // Free tender watch: opens the account creation page, pre-filled.
     var veille = document.getElementById("veille");
     veille.addEventListener("submit", function (ev) {
       ev.preventDefault();
-      openMail("VEILLE", [
-        "Bonjour,",
-        "",
-        "Je souhaite recevoir la veille gratuite des appels d'offres.",
-        "",
-        "Entreprise : " + val(veille, "entreprise"),
-        "Métier : " + val(veille, "metier"),
-        "Départements : " + val(veille, "departements"),
-        ""
-      ]);
-      veille.querySelector(".status").textContent = "Votre messagerie s'ouvre avec la demande prête : il ne reste qu'à l'envoyer." + FALLBACK;
+      var q = new URLSearchParams();
+      ["entreprise", "metier", "departements"].forEach(function (k) { if (val(veille, k)) q.set(k, val(veille, k)); });
+      window.location.href = "/espace/inscription/" + (q.toString() ? "?" + q.toString() : "");
     });
 
     // Order form: builds the email; the client attaches the files in their own mail app.

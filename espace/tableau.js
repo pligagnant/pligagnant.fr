@@ -16,6 +16,10 @@
   var FILTRES = [["tous", "Tous"], ["gagne", "Gagnés"], ["perdu", "Perdus"], ["sans_suite", "Sans suite"], ["abandonne", "Abandonnés"], ["ecartee", "Écartés"]];
 
   var etat = { d: null, onglet: "opportunites", filtre: "tous", visitePrec: null, charge: 0 };
+  // Compte gratuit (formule « veille ») : seule la veille est active, le suivi s'active avec le premier mémoire.
+  var VERROUILLES = ["preparation", "deposes", "historique"];
+  function gratuit() { return !!(etat.d && etat.d.entreprise && etat.d.entreprise.formule === "veille"); }
+  function verrouille(onglet) { return gratuit() && VERROUILLES.indexOf(onglet) >= 0; }
   var $ = function (id) { return document.getElementById(id); };
 
   // ------------------------------------------------------------------ données
@@ -116,6 +120,9 @@
     rendreOnglets(g);
     rendreGuide();
     rendrePanneau(g);
+    var bAj = $("b-ajouter");
+    bAj.classList.toggle("verrou", gratuit());
+    bAj.title = gratuit() ? "S'active avec votre premier mémoire" : "";
     $("corps").hidden = false;
   }
 
@@ -148,14 +155,21 @@
     ];
     var grille = el("div", { class: "esp-stats" });
     tuiles.forEach(function (t) {
-      grille.appendChild(el("button", { type: "button", class: "tuile", "aria-current": etat.onglet === t[0] ? "true" : "false",
+      var ferme = verrouille(t[0]);
+      grille.appendChild(el("button", { type: "button", class: "tuile" + (ferme ? " verrou" : ""), "aria-current": etat.onglet === t[0] ? "true" : "false",
         onclick: function () { choisirOnglet(t[0], true); } }, [
-        el("span", { class: "n", text: String(t[1]) }),
-        el("span", { class: "t", text: t[2] }),
-        el("span", { class: "d" + (t[4] ? " chaud" : ""), text: t[3] })
+        el("span", { class: "n", text: ferme ? "À activer" : String(t[1]) }),
+        el("span", { class: "t", text: ferme ? { preparation: "En préparation", deposes: "Déposés", historique: "Résultats" }[t[0]] : t[2] }),
+        el("span", { class: "d" + (t[4] && !ferme ? " chaud" : ""), text: ferme ? "avec votre premier mémoire" : t[3] })
       ]));
     });
     h.appendChild(grille);
+    if (gratuit()) {
+      h.appendChild(el("div", { class: "bandeau" }, [
+        el("p", {}, [el("b", { text: "Compte gratuit : " }), "la veille des appels d'offres est incluse. Le suivi de vos réponses, de vos dépôts et de vos résultats s'active avec votre premier mémoire confié à Pli Gagnant."]),
+        el("button", { type: "button", class: "lien", text: "En savoir plus", onclick: fenVerrou })
+      ]));
+    }
   }
 
   function rendreOnglets(g) {
@@ -164,6 +178,7 @@
     ONGLETS.forEach(function (t) {
       var n = t.id === "opportunites" ? g.opportunites.length : g[t.id].length;
       o.appendChild(el("button", { type: "button", role: "tab", id: "o-" + t.id, "aria-controls": "panneau",
+        class: verrouille(t.id) ? "verrou" : null, title: verrouille(t.id) ? "S'active avec votre premier mémoire" : null,
         "aria-selected": etat.onglet === t.id ? "true" : "false", tabindex: etat.onglet === t.id ? "0" : "-1",
         onclick: function () { choisirOnglet(t.id); } }, [t.nom, el("span", { class: "c", text: String(n) })]));
     });
@@ -197,12 +212,16 @@
         el("button", { type: "button", class: "lien discret", text: "Masquer", onclick: function () {
           PG.ecrireStock("pg-guide-ferme", "1"); history.replaceState(null, "", location.pathname + location.hash); zone.textContent = ""; } })
       ]),
-      el("ol", {}, [
+      gratuit() ? el("ol", {}, [
+        el("li", {}, [el("b", { text: "Opportunités" }), " : les consultations ouvertes dans votre métier et vos départements, avec notre avis sur chacune. Nous en ajoutons le lundi, le mercredi et le vendredi."]),
+        el("li", {}, [el("b", { text: "Une consultation vous intéresse ?" }), " Cliquez sur « Confier le mémoire à Pli Gagnant » : nous vous écrivons sous 24 h ouvrées pour récupérer le dossier."]),
+        el("li", {}, [el("b", { text: "Les outils grisés" }), " (suivi de vos réponses, dépôts, résultats, collaborateurs) s'activent avec ce premier mémoire."])
+      ]) : el("ol", {}, [
         el("li", {}, [el("b", { text: "Opportunités" }), " : les consultations que nous repérons pour vous, avec notre avis. Cliquez sur « Je vais y répondre » pour celles qui vous intéressent."]),
         el("li", {}, [el("b", { text: "En préparation" }), " : vos réponses en cours, avec la date limite. Si nous rédigeons votre mémoire, vous suivez ici son avancement."]),
         el("li", {}, [el("b", { text: "Déposés" }), " : indiquez le résultat quand vous l'avez. Votre historique garde la trace de tout, gagné ou perdu."])
       ]),
-      el("p", { class: "rappel", text: "Un appel d'offres trouvé ailleurs ? Ajoutez-le avec le bouton « Ajouter un appel d'offres » pour tout suivre au même endroit." })
+      gratuit() ? null : el("p", { class: "rappel", text: "Un appel d'offres trouvé ailleurs ? Ajoutez-le avec le bouton « Ajouter un appel d'offres » pour tout suivre au même endroit." })
     ]);
     zone.appendChild(g);
   }
@@ -211,6 +230,7 @@
     var p = $("panneau");
     p.textContent = "";
     var o = etat.onglet;
+    if (verrouille(o)) { p.appendChild(panneauVerrou(o)); return; }
     if (o === "opportunites") {
       if (!g.opportunites.length) p.appendChild(videOpportunites());
       else p.appendChild(listeCartes(g.opportunites));
@@ -247,6 +267,11 @@
   }
   function videOpportunites() {
     var e = etat.d.entreprise;
+    if (e.veille_active && !e.veille_maj) {
+      return vide("Votre première sélection est en préparation",
+        "Nous cherchons les consultations ouvertes " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone : "") +
+        ". Elles arrivent ici sous un jour ouvré, avec notre avis sur chacune, et nous vous prévenons par email.");
+    }
     if (e.veille_active) {
       return vide("Aucune consultation ouverte à vous proposer en ce moment",
         "Nous cherchons pour vous " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone + " " : "") +
@@ -342,7 +367,11 @@
   function actionsDe(c) {
     var a = [];
     function bouton(texte, classe, fn) { return el("button", { type: "button", class: "btn petit " + (classe || ""), text: texte, onclick: fn }); }
-    if (c.statut === "opportunite") {
+    if (c.statut === "opportunite" && gratuit()) {
+      a.push(bouton("Confier le mémoire à Pli Gagnant", "", function () { fenMemoire(c); }));
+      a.push(bouton("Je vais y répondre", "verrou", fenVerrou));
+      a.push(bouton("Pas pour moi", "plain", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); }));
+    } else if (c.statut === "opportunite") {
       a.push(bouton("Je vais y répondre", "", function (ev) { changerStatut(c, "en_preparation", {}, ev.currentTarget); }));
       a.push(bouton("Confier le mémoire à Pli Gagnant", "ghost", function () { fenMemoire(c); }));
       a.push(bouton("Pas pour moi", "plain", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); }));
@@ -429,8 +458,11 @@
     ], async function (f, msg, ok) {
       var r = await appeler("client_demander_memoire", { p_id: c.id, p_message: message.value.trim() || null }, ok);
       if (!r) return false;
+      var etaitGratuit = gratuit();
+      if (etaitGratuit) etat.d.entreprise.formule = "client";
       remplacer(r); etat.onglet = "preparation"; rendre();
-      PG.toast("Demande envoyée. Nous vous écrivons sous 24 h ouvrées.");
+      PG.toast(etaitGratuit ? "Demande envoyée, et votre suivi est activé. Nous vous écrivons sous 24 h ouvrées."
+                            : "Demande envoyée. Nous vous écrivons sous 24 h ouvrées.", { duree: 6000 });
       return true;
     }, "Envoyer ma demande");
   }
@@ -552,7 +584,9 @@
       el("h3", { text: "Accès à votre espace" }), equipe
     ];
     var invEmail = null, invNom = null;
-    if (moi.role === "titulaire") {
+    if (moi.role === "titulaire" && gratuit()) {
+      contenu.push(el("p", { class: "rappel verrou", text: "L'accès de vos collaborateurs s'active avec votre premier mémoire confié à Pli Gagnant." }));
+    } else if (moi.role === "titulaire") {
       invEmail = el("input", { type: "email", autocomplete: "off", inputmode: "email", placeholder: "prenom@entreprise.fr" });
       invNom = el("input", { type: "text", maxlength: "120", autocomplete: "off", placeholder: "Facultatif" });
       contenu.push(el("p", { class: "rappel", text: "Invitez un collaborateur (5 accès au plus) : il reçoit un email pour choisir son propre mot de passe." }));
@@ -583,6 +617,48 @@
       return true;
     }, "Enregistrer");
     PG.brancherAffichage(dlg);
+  }
+
+  // ------------------------------------------------------------------ compte gratuit
+  function ceQuiSActive() {
+    return el("ul", { class: "liste-verrou" }, [
+      el("li", { text: "Le suivi de vos réponses en préparation, avec l'avancement de votre mémoire." }),
+      el("li", { text: "Vos dépôts et vos résultats, gagnés ou perdus, dans un historique." }),
+      el("li", { text: "L'ajout des appels d'offres que vous trouvez ailleurs." }),
+      el("li", { text: "L'accès de vos collaborateurs à votre espace." })
+    ]);
+  }
+  function commentActiver() {
+    var offre = (etat.d && etat.d.offre) || {};
+    return "Pour les activer, cliquez sur « Confier le mémoire à Pli Gagnant » sous une opportunité, ou transférez-nous un dossier à " +
+      PG.CONTACT + ". Votre premier mémoire n'est payé que s'il vous convient" +
+      (offre.offre_prix_memoire ? " (" + offre.offre_prix_memoire + " ensuite)." : ".");
+  }
+  function fenVerrou() {
+    var d = el("dialog", { class: "fen", "aria-labelledby": "fen-titre" });
+    var voir = el("button", { type: "button", class: "btn", text: "Voir mes opportunités", onclick: function () { d.close(); choisirOnglet("opportunites"); } });
+    d.appendChild(el("button", { type: "button", class: "fermer", "aria-label": "Fermer", text: "×", onclick: function () { d.close(); } }));
+    d.appendChild(el("div", { class: "fen-in" }, [
+      el("h2", { id: "fen-titre", text: "S'active avec votre premier mémoire" }),
+      el("p", { text: "Votre compte gratuit comprend la veille des appels d'offres, avec notre avis sur chacun. Ces outils s'activent dès que vous nous confiez un premier mémoire technique :" }),
+      ceQuiSActive(),
+      el("p", { class: "rappel", text: commentActiver() }),
+      el("div", { class: "boutons" }, [voir])
+    ]));
+    d.addEventListener("close", function () { d.remove(); });
+    document.body.appendChild(d);
+    d.showModal();
+    voir.focus();
+  }
+  function panneauVerrou(o) {
+    var titres = { preparation: "Suivez vos réponses en préparation", deposes: "Suivez vos offres déposées", historique: "Gardez l'historique de vos résultats" };
+    return el("div", { class: "panneau-verrou" }, [
+      el("h3", { class: "verrou", text: titres[o] }),
+      el("p", { text: "Cet outil s'active avec votre premier mémoire confié à Pli Gagnant. Vous aurez alors :" }),
+      ceQuiSActive(),
+      el("p", { text: commentActiver() }),
+      el("div", { class: "v-actions" }, [el("button", { type: "button", class: "btn petit", text: "Voir mes opportunités", onclick: function () { choisirOnglet("opportunites"); } })])
+    ]);
   }
 
   function confirmerRetrait(bouton, email) {
@@ -620,7 +696,7 @@
     sb.auth.onAuthStateChange(function (ev) { if (ev === "SIGNED_OUT") location.replace("/espace/?deconnecte=1"); });
     $("b-deconnexion").addEventListener("click", async function () { await sb.auth.signOut(); location.replace("/espace/?deconnecte=1"); });
     $("b-compte").addEventListener("click", function () { if (etat.d) fenCompte(); });
-    $("b-ajouter").addEventListener("click", function () { if (etat.d) fenAjouter(); });
+    $("b-ajouter").addEventListener("click", function () { if (!etat.d) return; if (gratuit()) fenVerrou(); else fenAjouter(); });
 
     var dejaVu = PG.lireSession("pg-visite-prec");
     var visite = dejaVu === null;

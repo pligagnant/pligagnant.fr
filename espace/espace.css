@@ -138,6 +138,53 @@ dialog.fen::backdrop { background: rgba(15, 27, 61, 0.45); }
 .toast button { font: inherit; font-weight: 800; color: var(--highlight); background: none; border: 0; cursor: pointer; padding: 4px; text-decoration: underline; }
 .toast.erreur { background: #8A2F00; }
 
+/* ---------- Inscription ---------- */
+.facultatif { font-weight: 500; color: var(--muted); }
+.champ select { appearance: none; -webkit-appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A5675' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 18px; padding-right: 40px; }
+.puces { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.puces[hidden] { display: none; }
+.puces li { display: inline-flex; align-items: center; gap: 4px; background: #E8EDFD; color: var(--blue-dark); font-weight: 700; font-size: 0.95rem; border-radius: 999px; padding: 4px 4px 4px 12px; }
+.puces button { font: inherit; font-size: 1.15rem; line-height: 1; width: 30px; height: 30px; border-radius: 50%; border: 0; background: transparent; color: var(--blue-dark); cursor: pointer; }
+.puces button:hover { background: #fff; }
+.combo { position: relative; }
+.combo input { width: 100%; }
+.combo input:disabled { background: var(--band); }
+.suggestions { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 4px); list-style: none; margin: 0; padding: 6px; background: #fff; border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 18px 36px -18px rgba(15, 27, 61, 0.45); max-height: 300px; overflow-y: auto; }
+.suggestions li { padding: 10px 12px; border-radius: 6px; cursor: pointer; }
+.suggestions li b { display: inline-block; min-width: 2.6em; color: var(--muted); }
+.suggestions li[aria-selected="true"], .suggestions li:hover { background: #F2F5FE; }
+.suggestions li.aucun { color: var(--muted); cursor: default; background: none; }
+.attention-txt { color: #A23B00 !important; font-weight: 700; }
+.piege { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.mentions { color: var(--muted); font-size: 0.88rem; }
+.envoye-icone { width: 56px; height: 56px; border-radius: 50%; background: #E8EDFD; color: var(--blue); display: grid; place-items: center; font-size: 1.7rem; }
+.etapes-suite { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.rappel-spam { background: var(--band); border-radius: 8px; padding: 12px 14px; font-size: 0.95rem; }
+#envoye:focus { outline: none; }
+.aside-titre { font-weight: 800; color: var(--ink) !important; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 6px; }
+.liste-verrou { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; color: var(--muted); }
+.liste-verrou li { position: relative; padding-left: 30px; }
+.liste-verrou li::before, .verrou::before { content: ""; display: inline-block; width: 15px; height: 15px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A5675' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") no-repeat center / contain; }
+.liste-verrou li::before { position: absolute; left: 0; top: 0.3em; }
+
+/* ---------- Compte gratuit : outils grisés ---------- */
+.verrou::before { margin-right: 7px; vertical-align: -2px; }
+.onglets button.verrou { color: #8A93AB; }
+.onglets button.verrou[aria-selected="true"] { color: var(--muted); border-bottom-color: var(--rule); }
+.onglets button.verrou .c { display: none; }
+.tuile.verrou { background: var(--band); border-style: dashed; color: var(--muted); }
+.tuile.verrou::before { display: none; }
+.tuile.verrou .n { font-size: 1rem; font-weight: 700; font-stretch: 100%; line-height: 1.6; color: var(--muted); }
+.tuile.verrou .n::before { content: ""; display: inline-block; width: 18px; height: 18px; vertical-align: -3px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A5675' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") no-repeat center / contain; margin-right: 6px; }
+.btn.verrou, .btn.verrou:hover { background: var(--band); border-color: var(--rule); color: #6B7591; cursor: pointer; box-shadow: none; }
+.bandeau { max-width: 860px; display: flex; gap: 12px 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--kraft); border-radius: 10px; padding: 14px 18px; margin-top: 8px; }
+.bandeau p { color: var(--ink); max-width: 46em; }
+.bandeau b { font-weight: 800; }
+.panneau-verrou { max-width: 760px; background: var(--band); border-radius: 10px; padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+.panneau-verrou h3 { font-size: 1.2rem; }
+.panneau-verrou p { color: var(--muted); }
+.fen .liste-verrou { gap: 8px; }
+
 @media (max-width: 880px) {
   .esp-auth .wrap { grid-template-columns: 1fr; gap: 36px; padding-top: 28px; }
   .esp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/espace/espace.css?v=2">
+<link rel="stylesheet" href="/espace/espace.css?v=3">
 </head>
 <body>
 
@@ -42,6 +42,7 @@
         <p class="msg" id="msg-connexion" role="alert"></p>
       </form>
       <button type="button" class="lien" id="vers-oubli">Mot de passe oublié ou première connexion&nbsp;?</button>
+      <p class="intro" id="vers-inscription">Pas encore de compte&nbsp;? <a href="/espace/inscription/">Créer mon compte gratuit</a></p>
       <form id="f-oubli" class="form-pile" hidden novalidate>
         <p class="intro">Indiquez votre adresse email&nbsp;: nous vous envoyons un lien pour choisir votre mot de passe.</p>
         <div class="champ"><label for="email-oubli">Adresse email</label>
@@ -59,7 +60,7 @@
         <li>Celles que vous préparez, et l'avancement du mémoire quand nous le rédigeons.</li>
         <li>Celles que vous avez déposées, jusqu'au résultat.</li>
       </ul>
-      <p>Pas encore de compte&nbsp;? L'espace est ouvert à nos clients et aux abonnés de la <a href="/ma-veille/">veille gratuite</a>. Écrivez-nous à <a href="mailto:contact@pligagnant.fr?subject=Acc%C3%A8s%20%C3%A0%20l'espace%20client">contact@pligagnant.fr</a>&nbsp;: nous vous envoyons une invitation.</p>
+      <p>Pas encore de compte&nbsp;? <a href="/espace/inscription/">Créez-le gratuitement</a>&nbsp;: vous recevez la <a href="/ma-veille/">veille des appels d'offres</a> de votre métier, avec notre avis sur chacun.</p>
     </aside>
   </div>
 </main>
@@ -77,6 +78,6 @@
 <script src="/espace/config.js?v=2"></script>
 <script src="/espace/supabase.js?v=2"></script>
 <script src="/espace/commun.js?v=2"></script>
-<script src="/espace/connexion.js?v=2"></script>
+<script src="/espace/connexion.js?v=3"></script>
 </body>
 </html>

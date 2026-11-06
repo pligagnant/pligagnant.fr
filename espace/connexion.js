@@ -21,6 +21,7 @@
 
   function montrer(oubli) {
     fC.hidden = oubli; lienOubli.hidden = oubli; fO.hidden = !oubli;
+    var vi = document.getElementById("vers-inscription"); if (vi) vi.hidden = oubli;
     msgC.textContent = ""; msgO.textContent = ""; msgO.className = "msg"; info.textContent = "";
     document.getElementById("titre").textContent = oubli ? "Choisir un mot de passe" : "Connexion";
     var e = document.getElementById(oubli ? "email-oubli" : "email");

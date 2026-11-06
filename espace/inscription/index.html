@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://wvtiadlhjsozepqenotq.supabase.co wss://wvtiadlhjsozepqenotq.supabase.co; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Créer un compte · Pli Gagnant</title>
+<meta name="description" content="Créez votre compte Pli Gagnant gratuitement : les appels d'offres de votre métier dans vos départements, avec notre avis sur chacun, mis à jour trois fois par semaine.">
+<meta name="theme-color" content="#0F1B3D">
+<link rel="canonical" href="https://pligagnant.fr/espace/inscription/">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/espace/espace.css?v=3">
+</head>
+<body>
+
+<header class="esp-top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Pli Gagnant, accueil"><svg class="logo" viewBox="0 0 147 100" aria-hidden="true"><path fill-rule="evenodd" fill="#0F1B3D" d="M3 0H55L76 21V40A24 24 0 0 1 52 64H24V97A3 3 0 0 1 21 100H3A3 3 0 0 1 0 97V3A3 3 0 0 1 3 0ZM24 21H55V35A8 8 0 0 1 47 43H24Z"/><path fill="#2F55E4" d="M55 0V21H76Z"/><rect x="87" y="0" width="24" height="100" rx="3" fill="#0F1B3D"/><rect x="123" y="0" width="24" height="24" rx="3" fill="#2F55E4"/><rect x="123" y="33" width="24" height="67" rx="3" fill="#0F1B3D"/></svg><span>Espace client</span></a>
+    <nav class="esp-nav" aria-label="Espace client"><a href="/espace/">Se connecter</a></nav>
+  </div>
+</header>
+
+<main class="esp-auth">
+  <div class="wrap">
+    <section class="carte" aria-labelledby="titre" id="carte">
+      <p class="kicker">Gratuit, sans engagement</p>
+      <h1 id="titre">Créer mon compte</h1>
+      <p class="intro">Recevez dans votre espace les appels d'offres de votre métier, dans vos départements, avec notre avis sur chacun.</p>
+
+      <form id="f-inscription" class="form-pile" novalidate>
+        <div class="champ"><label for="nom">Prénom et nom</label>
+          <input id="nom" name="nom" type="text" autocomplete="name" maxlength="120" required></div>
+        <div class="champ"><label for="entreprise">Entreprise</label>
+          <input id="entreprise" name="entreprise" type="text" autocomplete="organization" maxlength="200" required></div>
+        <div class="champ"><label for="email">Adresse email professionnelle</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="200" required>
+          <small>Nous y envoyons le lien pour choisir votre mot de passe.</small></div>
+
+        <div class="champ"><label for="metier">Votre métier</label>
+          <select id="metier" name="metier" required>
+            <option value="">Choisissez…</option>
+            <option value="espaces verts">Espaces verts et paysage</option>
+            <option value="nettoyage">Nettoyage et propreté</option>
+            <option value="second œuvre">Second œuvre (peinture, plâtrerie, sols, menuiserie)</option>
+            <option value="gros œuvre et maçonnerie">Gros œuvre et maçonnerie</option>
+            <option value="VRD et voirie">VRD, voirie et terrassement</option>
+            <option value="maintenance et sécurité">Maintenance et sécurité des bâtiments</option>
+            <option value="électricité">Électricité</option>
+            <option value="plomberie, chauffage et climatisation">Plomberie, chauffage, climatisation</option>
+            <option value="couverture et étanchéité">Couverture et étanchéité</option>
+            <option value="autre">Autre métier…</option>
+          </select></div>
+        <div class="champ" id="champ-autre" hidden><label for="metier-autre">Précisez votre métier</label>
+          <input id="metier-autre" type="text" maxlength="80" placeholder="Ex. : élagage, désamiantage, restauration collective"></div>
+
+        <div class="champ" id="champ-dep">
+          <label for="dep-saisie">Vos départements</label>
+          <ul class="puces" id="dep-choisis" aria-label="Départements choisis"></ul>
+          <div class="combo">
+            <input id="dep-saisie" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+                   role="combobox" aria-expanded="false" aria-controls="dep-liste" aria-autocomplete="list"
+                   placeholder="Tapez un numéro ou un nom : 68, Gironde…">
+            <ul class="suggestions" id="dep-liste" role="listbox" hidden></ul>
+          </div>
+          <small id="dep-aide">Jusqu'à 5 départements : là où vous travaillez.</small>
+        </div>
+
+        <div class="champ"><label for="ville">Ville de votre entreprise <span class="facultatif">(facultatif)</span></label>
+          <input id="ville" name="ville" type="text" autocomplete="address-level2" maxlength="100">
+          <small>Elle nous aide à juger les distances dans nos avis.</small></div>
+
+        <div class="piege" aria-hidden="true">
+          <label for="site_web">Ne pas remplir</label>
+          <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button class="btn" type="submit">Créer mon compte gratuit</button>
+        <p class="msg" id="msg" role="alert"></p>
+        <p class="mentions">En créant votre compte, vous acceptez nos <a href="/legal.html#cgv">conditions</a> et notre <a href="/legal.html#confidentialite">politique de confidentialité</a>. Pour arrêter la veille, il suffit de répondre «&nbsp;STOP&nbsp;» à l'un de nos emails.</p>
+      </form>
+
+      <div id="envoye" class="form-pile" hidden tabindex="-1">
+        <p class="envoye-icone" aria-hidden="true">✉</p>
+        <p class="intro" id="envoye-texte"></p>
+        <ol class="etapes-suite">
+          <li>Ouvrez l'email <b>«&nbsp;Votre espace client Pli Gagnant est prêt&nbsp;»</b>, envoyé par contact@pligagnant.fr.</li>
+          <li>Cliquez sur <b>Choisir mon mot de passe</b> (le lien est valable 24&nbsp;heures).</li>
+          <li>Votre première sélection d'appels d'offres arrive dans votre espace sous un jour ouvré, avec notre avis sur chacun.</li>
+        </ol>
+        <p class="rappel-spam">Rien reçu d'ici 5&nbsp;minutes&nbsp;? Regardez dans vos courriers indésirables ou l'onglet Promotions. Toujours rien&nbsp;? Écrivez-nous à <a href="mailto:contact@pligagnant.fr">contact@pligagnant.fr</a>.</p>
+        <button type="button" class="lien" id="recommencer">Corriger mon adresse email</button>
+      </div>
+    </section>
+
+    <aside>
+      <h2>Ce que comprend votre compte</h2>
+      <p class="aside-titre">Inclus gratuitement</p>
+      <ul class="checklist">
+        <li>Les consultations ouvertes dans votre métier et vos départements, vérifiées dans les avis publiés.</li>
+        <li>Notre avis franc sur chacune&nbsp;: à tenter, à regarder de près ou à laisser passer, et pourquoi.</li>
+        <li>Mise à jour le lundi, le mercredi et le vendredi, avec un résumé par email le lundi.</li>
+      </ul>
+      <p class="aside-titre">S'activent avec votre premier mémoire</p>
+      <ul class="liste-verrou">
+        <li>Le suivi de vos réponses en préparation, de vos dépôts et de vos résultats.</li>
+        <li>L'ajout des appels d'offres que vous trouvez ailleurs.</li>
+        <li>L'accès de vos collaborateurs à votre espace.</li>
+      </ul>
+      <p>Une consultation vous intéresse&nbsp;? Confiez-nous le mémoire technique d'un clic depuis votre espace&nbsp;: le premier n'est payé que s'il vous convient.</p>
+      <p>Déjà un compte&nbsp;? <a href="/espace/">Connectez-vous</a>.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Pli Gagnant, entrepreneur individuel, SIRET 977 494 913 00022</span>
+    <nav aria-label="Informations légales">
+      <a href="/legal.html#cgv">Conditions de vente</a>
+      <a href="/legal.html#confidentialite">Confidentialité</a>
+      <a href="/legal.html#mentions-legales">Mentions légales</a>
+    </nav>
+  </div>
+</footer>
+<script src="/espace/config.js?v=2"></script>
+<script src="/espace/inscription.js?v=1"></script>
+</body>
+</html>
