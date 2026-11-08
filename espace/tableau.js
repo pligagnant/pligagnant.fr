@@ -15,7 +15,8 @@
   var ETAPES = [["demande", "Demande reçue"], ["dossier_recu", "Dossier reçu"], ["en_redaction", "Rédaction"], ["livre", "Mémoire livré"]];
   var FILTRES = [["tous", "Tous"], ["gagne", "Gagnés"], ["perdu", "Perdus"], ["sans_suite", "Sans suite"], ["abandonne", "Abandonnés"], ["ecartee", "Écartés"]];
 
-  var etat = { d: null, onglet: "opportunites", filtre: "tous", visitePrec: null, charge: 0 };
+  var etat = { d: null, onglet: "opportunites", filtre: "tous", filtreOpp: "tous", tri: PG.lireStock("pg-tri", "avis") === "date" ? "date" : "avis",
+               visitePrec: null, charge: 0 };
   // Compte gratuit (formule « veille ») : seule la veille est active, le suivi s'active avec le premier mémoire.
   var VERROUILLES = ["preparation", "deposes", "historique"];
   function gratuit() { return !!(etat.d && etat.d.entreprise && etat.d.entreprise.formule === "veille"); }
@@ -126,61 +127,117 @@
     $("corps").hidden = false;
   }
 
+  function dateMoyenne(d) { // « jeu. 12 nov. »
+    var x = PG.vers(d); if (!x) return "";
+    var s = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."][x.getDay()] + " " + PG.dateCourte(d);
+    if (x.getFullYear() !== PG.vers(jour()).getFullYear()) s += " " + x.getFullYear();
+    return s.replace(/ /g, "\u00a0");
+  }
+  function pluriel(n, un, plusieurs) { return n + " " + (n > 1 ? plusieurs : un); }
+  function joursAvant(c) { return c.date_limite ? PG.ecart(c.date_limite, jour()) : null; }
+
+  // En-tête : entreprise, veille, et ce qui attend une action du client.
   function rendreHello(d, g) {
     var e = d.entreprise, h = $("hello");
     h.textContent = "";
-    var sous = [];
-    if (e.veille_active && e.metier) sous.push("Veille " + e.metier + (e.zone ? " dans " + e.zone : ""));
-    if (e.veille_maj) sous.push("mise à jour le " + PG.dateLongue(e.veille_maj));
-    if (e.veille_prochaine) sous.push("prochaine le " + PG.dateLongue(e.veille_prochaine));
-    h.appendChild(el("p", { class: "kicker", text: "Espace client" }));
-    h.appendChild(el("h1", { text: e.nom }));
-    if (sous.length) h.appendChild(el("p", { class: "sous", text: sous.join(" · ") }));
-
-    var tenter = g.opportunites.filter(function (c) { return c.avis === "tenter"; }).length;
-    var nouveaux = g.opportunites.concat(g.deconseillees).filter(estNouveau).length;
-    var prochaine = g.preparation.filter(function (c) { return c.date_limite && !passee(c); })[0];
-    var enRetard = g.preparation.filter(passee).length;
-    var resultats = g.historique.filter(function (c) { return ["gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0; });
-    var gagnes = resultats.filter(function (c) { return c.statut === "gagne"; }).length;
-    var tuiles = [
-      ["opportunites", g.opportunites.length, g.opportunites.length > 1 ? "Opportunités" : "Opportunité",
-        nouveaux ? nouveaux + (nouveaux > 1 ? " nouvelles" : " nouvelle") + " depuis votre visite" : tenter ? "dont " + tenter + " à tenter" : "à étudier", !!nouveaux],
-      ["preparation", g.preparation.length, "En préparation",
-        enRetard ? enRetard + " à confirmer" : prochaine ? "prochaine limite : " + PG.dateCourte(prochaine.date_limite) : "aucune date limite proche",
-        !!enRetard || (prochaine && PG.ecart(prochaine.date_limite, jour()) <= 3)],
-      ["deposes", g.deposes.length, g.deposes.length > 1 ? "Déposés" : "Déposé", "en attente du résultat", false],
-      ["historique", gagnes, gagnes > 1 ? "Gagnés" : "Gagné",
-        resultats.length ? "sur " + resultats.length + " résultat" + (resultats.length > 1 ? "s" : "") + " connu" + (resultats.length > 1 ? "s" : "") : "aucun résultat pour l'instant", false]
-    ];
-    var grille = el("div", { class: "esp-stats" });
-    tuiles.forEach(function (t) {
-      var ferme = verrouille(t[0]);
-      grille.appendChild(el("button", { type: "button", class: "tuile" + (ferme ? " verrou" : ""), "aria-current": etat.onglet === t[0] ? "true" : "false",
-        onclick: function () { choisirOnglet(t[0], true); } }, [
-        el("span", { class: "n", text: ferme ? "À activer" : String(t[1]) }),
-        el("span", { class: "t", text: ferme ? { preparation: "En préparation", deposes: "Déposés", historique: "Résultats" }[t[0]] : t[2] }),
-        el("span", { class: "d" + (t[4] && !ferme ? " chaud" : ""), text: ferme ? "avec votre premier mémoire" : t[3] })
-      ]));
-    });
-    h.appendChild(grille);
+    h.appendChild(el("div", { class: "hello-tete" }, [
+      el("h1", { text: e.nom }),
+      e.veille_active && e.metier ? el("p", { class: "sous", text: "Veille " + e.metier + (e.zone ? " dans " + e.zone : "") }) : null,
+      e.veille_active && e.veille_maj ? el("p", { class: "maj", text: "Mise à jour le " + dateMoyenne(e.veille_maj) +
+        (e.veille_prochaine ? " · prochaine le " + dateMoyenne(e.veille_prochaine) : "") }) : null
+    ]));
     if (gratuit()) {
-      h.appendChild(el("div", { class: "bandeau" }, [
-        el("p", {}, [el("b", { text: "Compte gratuit : " }), "la veille des appels d'offres est incluse. Le suivi de vos réponses, de vos dépôts et de vos résultats s'active avec votre premier mémoire confié à Pli Gagnant."]),
-        el("button", { type: "button", class: "lien", text: "En savoir plus", onclick: fenVerrou })
-      ]));
+      h.appendChild(el("p", { class: "bandeau" }, [el("b", { class: "verrou", text: "Compte gratuit : " }),
+        "la veille est incluse ; le suivi de vos réponses s'active avec votre premier mémoire confié. ",
+        el("button", { type: "button", class: "lien", text: "En savoir plus", onclick: fenVerrou })]));
     }
+    var items = aFaire(g);
+    if (!items.length) return;
+    var ul = el("ul");
+    items.slice(0, 3).forEach(function (it) {
+      ul.appendChild(el("li", {}, [el("button", { type: "button", class: "af" + (it.urgent ? " af-urgent" : ""), onclick: it.action }, [
+        el("span", { class: "af-txt" }, it.texte), el("span", { class: "af-go" }, [el("span", { class: "mot", text: it.bouton })])
+      ])]));
+    });
+    h.appendChild(el("section", { class: "afaire", "aria-labelledby": "af-titre" }, [el("h2", { id: "af-titre", text: "À faire" }), ul]));
   }
 
+  function aFaire(g) {
+    var L = [];
+    function b(t) { return el("b", { text: t }); }
+    function voir(c, onglet) { return function () { allerA(onglet, c.id); }; }
+    g.preparation.filter(passee).forEach(function (c) {
+      L.push({ p: 0, urgent: true, bouton: "Répondre", action: voir(c, "preparation"),
+        texte: [b(c.acheteur), " : date limite passée. Avez-vous déposé votre offre ?"] });
+    });
+    g.preparation.filter(function (c) { return !passee(c) && c.memoire === "livre"; }).forEach(function (c) {
+      L.push({ p: 1, bouton: "Voir", action: voir(c, "preparation"),
+        texte: [b(c.acheteur), " : votre mémoire est livré, à relire et déposer" + (c.date_limite ? " avant le " + dateMoyenne(c.date_limite) : "")] });
+    });
+    g.preparation.filter(function (c) { var n = joursAvant(c); return n !== null && n >= 0 && n <= 5 && c.memoire !== "livre"; }).forEach(function (c) {
+      L.push({ p: 2, urgent: joursAvant(c) <= 2, bouton: "Voir", action: voir(c, "preparation"),
+        texte: [b(c.acheteur), " : date limite " + PG.dansCombien(joursAvant(c))] });
+    });
+    var nouv = g.opportunites.filter(estNouveau).length;
+    if (nouv) {
+      L.push({ p: 3, bouton: "Voir", texte: [el("b", { text: pluriel(nouv, "nouvelle opportunité", "nouvelles opportunités") }), " depuis votre dernière visite"],
+        action: function () { etat.filtreOpp = "nouvelles"; allerA("opportunites"); } });
+    }
+    var proche = g.opportunites.filter(function (c) { var n = joursAvant(c); return c.avis === "tenter" && n !== null && n <= 7; }).sort(parDate)[0];
+    if (proche) {
+      L.push({ p: 4, bouton: "Voir", action: voir(proche, "opportunites"),
+        texte: [b(proche.acheteur), " : à tenter, date limite " + PG.dansCombien(joursAvant(proche))] });
+    }
+    var attente = g.deposes.filter(function (c) { return c.date_depot && PG.ecart(jour(), c.date_depot) >= 30; })
+      .sort(function (a, b) { return a.date_depot < b.date_depot ? -1 : 1; })[0];
+    if (attente) {
+      L.push({ p: 5, bouton: "Indiquer", action: function () { fenResultat(attente); },
+        texte: [b(attente.acheteur), " : résultat reçu ? Offre déposée le " + dateMoyenne(attente.date_depot)] });
+    }
+    return L.sort(function (a, b) { return a.p - b.p; });
+  }
+
+  // Ouvre un onglet et, si demandé, amène la fiche à l'écran.
+  function allerA(onglet, id) {
+    if (id && onglet === "opportunites") etat.filtreOpp = "tous";
+    etat.onglet = onglet;
+    if (location.hash !== "#" + onglet) history.replaceState(null, "", "#" + onglet);
+    PG.ecrireStock("pg-onglet", onglet);
+    rendre();
+    var cible = id && document.getElementById("carte-" + id);
+    if (!cible) { haut(true); return; }
+    var det = cible.closest("details"); if (det) det.open = true;
+    cible.scrollIntoView({ behavior: lent() ? "auto" : "smooth", block: "start" });
+    cible.focus({ preventScroll: true });
+    cible.classList.add("eclair");
+    setTimeout(function () { cible.classList.remove("eclair"); }, 1800);
+  }
+  function lent() { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  // Remonte en haut de la liste quand la barre d'onglets est restée collée en haut de l'écran.
+  function haut(doux) {
+    var y = $("corps").getBoundingClientRect().top + window.scrollY;
+    if (window.scrollY > y) window.scrollTo({ top: y, behavior: doux && !lent() ? "smooth" : "auto" });
+  }
+
+  var COURTS = { opportunites: "Opportunités", preparation: "En cours", deposes: "Déposés", historique: "Historique" };
   function rendreOnglets(g) {
     var o = $("onglets");
     o.textContent = "";
+    var signal = {
+      opportunites: g.opportunites.some(estNouveau),
+      preparation: g.preparation.some(function (c) { var n = joursAvant(c); return n !== null && n <= 3; })
+    };
     ONGLETS.forEach(function (t) {
       var n = t.id === "opportunites" ? g.opportunites.length : g[t.id].length;
+      var ferme = verrouille(t.id), choisi = etat.onglet === t.id;
       o.appendChild(el("button", { type: "button", role: "tab", id: "o-" + t.id, "aria-controls": "panneau",
-        class: verrouille(t.id) ? "verrou" : null, title: verrouille(t.id) ? "S'active avec votre premier mémoire" : null,
-        "aria-selected": etat.onglet === t.id ? "true" : "false", tabindex: etat.onglet === t.id ? "0" : "-1",
-        onclick: function () { choisirOnglet(t.id); } }, [t.nom, el("span", { class: "c", text: String(n) })]));
+        class: ferme ? "verrou" : null, title: ferme ? "S'active avec votre premier mémoire" : null,
+        "aria-selected": choisi ? "true" : "false", tabindex: choisi ? "0" : "-1",
+        onclick: function () { choisirOnglet(t.id); } }, [
+        el("span", { class: "l" }, [el("span", { class: "long", text: t.nom }), el("span", { class: "court", text: COURTS[t.id] })]),
+        ferme ? el("span", { class: "sr", text: " (à activer)" }) : el("span", { class: "c", text: String(n) }),
+        signal[t.id] && !ferme ? el("span", { class: "point" }, [el("span", { class: "sr", text: t.id === "opportunites" ? " (nouveautés)" : " (date limite proche)" })]) : null
+      ]));
     });
     $("panneau").setAttribute("aria-labelledby", "o-" + etat.onglet);
   }
@@ -192,12 +249,12 @@
     $("o-" + ONGLETS[i].id).focus();
   });
 
-  function choisirOnglet(id, defiler) {
+  function choisirOnglet(id) {
     etat.onglet = id;
     if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
     PG.ecrireStock("pg-onglet", id);
     rendre();
-    if (defiler) $("onglets").scrollIntoView({ behavior: "smooth", block: "start" });
+    haut(false);
   }
 
   function rendreGuide() {
@@ -206,24 +263,45 @@
     var bienvenue = new URLSearchParams(location.search).get("bienvenue");
     if (PG.lireStock("pg-guide-ferme", "") === "1" && !bienvenue) return;
     if (!bienvenue && etat.visitePrec) return;
-    var g = el("section", { class: "guide", "aria-label": "Comment ça marche" }, [
+    var g = el("section", { class: "guide", "aria-labelledby": "guide-titre" }, [
       el("div", { class: "haut" }, [
-        el("h2", { class: "", text: bienvenue ? "Bienvenue dans votre espace" : "Comment ça marche" }),
+        el("h2", { id: "guide-titre", text: bienvenue ? "Bienvenue dans votre espace" : "Comment ça marche" }),
         el("button", { type: "button", class: "lien discret", text: "Masquer", onclick: function () {
           PG.ecrireStock("pg-guide-ferme", "1"); history.replaceState(null, "", location.pathname + location.hash); zone.textContent = ""; } })
       ]),
       gratuit() ? el("ol", {}, [
-        el("li", {}, [el("b", { text: "Opportunités" }), " : les consultations ouvertes dans votre métier et vos départements, avec notre avis sur chacune. Nous en ajoutons le lundi, le mercredi et le vendredi."]),
+        el("li", {}, [el("b", { text: "Vos opportunités" }), " : les consultations ouvertes dans votre métier et vos départements, avec notre avis sur chacune. Nous en ajoutons le lundi, le mercredi et le vendredi."]),
         el("li", {}, [el("b", { text: "Une consultation vous intéresse ?" }), " Cliquez sur « Confier le mémoire à Pli Gagnant » : nous vous écrivons sous 24 h ouvrées pour récupérer le dossier."]),
         el("li", {}, [el("b", { text: "Les outils grisés" }), " (suivi de vos réponses, dépôts, résultats, collaborateurs) s'activent avec ce premier mémoire."])
       ]) : el("ol", {}, [
-        el("li", {}, [el("b", { text: "Opportunités" }), " : les consultations que nous repérons pour vous, avec notre avis. Cliquez sur « Je vais y répondre » pour celles qui vous intéressent."]),
-        el("li", {}, [el("b", { text: "En préparation" }), " : vos réponses en cours, avec la date limite. Si nous rédigeons votre mémoire, vous suivez ici son avancement."]),
-        el("li", {}, [el("b", { text: "Déposés" }), " : indiquez le résultat quand vous l'avez. Votre historique garde la trace de tout, gagné ou perdu."])
-      ]),
-      gratuit() ? null : el("p", { class: "rappel", text: "Un appel d'offres trouvé ailleurs ? Ajoutez-le avec le bouton « Ajouter un appel d'offres » pour tout suivre au même endroit." })
+        el("li", {}, [el("b", { text: "Opportunités" }), " : les consultations que nous repérons pour vous, avec notre avis. « Je vais y répondre » les passe en préparation."]),
+        el("li", {}, [el("b", { text: "En cours" }), " : vos réponses en préparation, avec la date limite et l'avancement de votre mémoire si nous le rédigeons."]),
+        el("li", {}, [el("b", { text: "Déposés et historique" }), " : indiquez le résultat quand vous l'avez. Tout reste en mémoire, gagné ou perdu."])
+      ])
     ]);
     zone.appendChild(g);
+  }
+
+  var FILTRES_OPP = [["tous", "Toutes"], ["tenter", "À tenter"], ["regarder", "À regarder"], ["nouvelles", "Nouvelles"]];
+  function filtreOpp(c) {
+    var f = etat.filtreOpp;
+    return f === "tous" || (f === "nouvelles" ? estNouveau(c) : c.avis === f);
+  }
+  function triOpp(a, b) {
+    return etat.tri === "date" ? parDate(a, b) || rangAvis(a) - rangAvis(b) : rangAvis(a) - rangAvis(b) || parDate(a, b);
+  }
+  // Barre de filtres réutilisable ; garde le focus sur le bouton choisi après le nouveau rendu.
+  function barreFiltres(etiquette, options, actif, choisir, extra) {
+    var f = el("div", { class: "filtres", role: "group", "aria-label": etiquette });
+    options.forEach(function (o) {
+      f.appendChild(el("button", { type: "button", "data-f": o[0], "aria-pressed": actif === o[0] ? "true" : "false",
+        onclick: function () {
+          choisir(o[0]); rendre();
+          var x = document.querySelector('.filtres [data-f="' + o[0] + '"]'); if (x) x.focus();
+        } }, [o[1] + " ", el("span", { class: "n", text: String(o[2]) })]));
+    });
+    if (extra) f.appendChild(extra);
+    return f;
   }
 
   function rendrePanneau(g) {
@@ -233,13 +311,28 @@
     if (verrouille(o)) { p.appendChild(panneauVerrou(o)); return; }
     if (o === "opportunites") {
       if (!g.opportunites.length) p.appendChild(videOpportunites());
-      else p.appendChild(listeCartes(g.opportunites));
+      else {
+        var nb = { tous: g.opportunites.length, nouvelles: g.opportunites.filter(estNouveau).length };
+        ["tenter", "regarder"].forEach(function (a) { nb[a] = g.opportunites.filter(function (c) { return c.avis === a; }).length; });
+        if (!nb[etat.filtreOpp]) etat.filtreOpp = "tous";
+        if (g.opportunites.length >= 3) {
+          var opts = FILTRES_OPP.filter(function (x) { return x[0] === "tous" || (nb[x[0]] && nb[x[0]] < nb.tous); })
+            .map(function (x) { return [x[0], x[1], nb[x[0]]]; });
+          var sel = el("select", { id: "tri", onchange: function () {
+            etat.tri = sel.value; PG.ecrireStock("pg-tri", sel.value); rendre(); var t = $("tri"); if (t) t.focus(); } }, [
+            el("option", { value: "avis", text: "notre avis" }), el("option", { value: "date", text: "date limite" })]);
+          sel.value = etat.tri;
+          var tri = el("label", { class: "tri", for: "tri" }, ["Trier par ", sel]);
+          p.appendChild(el("div", { class: "outils" }, [opts.length > 1
+            ? barreFiltres("Opportunités affichées", opts, etat.filtreOpp, function (v) { etat.filtreOpp = v; }, tri) : tri]));
+        }
+        p.appendChild(listeCartes(g.opportunites.filter(filtreOpp).sort(triOpp)));
+      }
       if (g.deconseillees.length) {
-        var det = el("details", { class: "v-passes" }, [
+        p.appendChild(el("details", { class: "v-passes" }, [
           el("summary", { text: "Celles que nous vous déconseillons (" + g.deconseillees.length + ")" }),
           listeCartes(g.deconseillees)
-        ]);
-        p.appendChild(det);
+        ]));
       }
     } else if (o === "preparation") {
       p.appendChild(g.preparation.length ? listeCartes(g.preparation)
@@ -248,19 +341,25 @@
       p.appendChild(g.deposes.length ? listeCartes(g.deposes)
         : vide("Aucune offre en attente de résultat", "Quand vous avez déposé une offre, cliquez sur « J'ai déposé mon offre » : vous la retrouvez ici jusqu'au résultat."));
     } else {
-      var filtres = el("div", { class: "filtres", role: "group", "aria-label": "Filtrer l'historique" });
-      FILTRES.forEach(function (f) {
-        var n = f[0] === "tous" ? g.historique.length : g.historique.filter(function (c) { return c.statut === f[0]; }).length;
-        if (f[0] !== "tous" && !n) return;
-        filtres.appendChild(el("button", { type: "button", "aria-pressed": etat.filtre === f[0] ? "true" : "false",
-          onclick: function () { etat.filtre = f[0]; rendre(); } }, f[1] + " (" + n + ")"));
-      });
+      var resultats = g.historique.filter(function (c) { return ["gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0; });
+      var gagnes = resultats.filter(function (c) { return c.statut === "gagne"; }).length;
+      if (resultats.length) {
+        p.appendChild(el("p", { class: "resume" }, [el("b", { text: pluriel(gagnes, "marché gagné", "marchés gagnés") }),
+          " sur " + pluriel(resultats.length, "résultat connu", "résultats connus") + "."]));
+      }
+      var opts2 = FILTRES.map(function (f) {
+        return [f[0], f[1], f[0] === "tous" ? g.historique.length : g.historique.filter(function (c) { return c.statut === f[0]; }).length];
+      }).filter(function (f) { return f[0] === "tous" || f[2]; });
+      if (!opts2.some(function (f) { return f[0] === etat.filtre; })) etat.filtre = "tous";
       var h = g.historique.filter(function (c) { return etat.filtre === "tous" || c.statut === etat.filtre; });
-      if (g.historique.length) p.appendChild(filtres);
+      if (opts2.length > 2) p.appendChild(el("div", { class: "outils" }, [barreFiltres("Filtrer l'historique", opts2, etat.filtre, function (v) { etat.filtre = v; })]));
       p.appendChild(h.length ? listeCartes(h)
         : vide("Votre historique est vide", "Il gardera la trace de vos appels d'offres terminés : gagnés, perdus, abandonnés ou écartés."));
     }
+    p.appendChild(el("button", { type: "button", class: "ajout-bas" + (gratuit() ? " verrou" : ""),
+      text: "Ajouter un appel d'offres trouvé ailleurs", onclick: ajouter }));
   }
+  function ajouter() { if (!etat.d) return; if (gratuit()) fenVerrou(); else fenAjouter(); }
 
   function vide(titre, texte, extra) {
     return el("div", { class: "vide" }, [el("h3", { text: titre }), el("p", { text: texte }), extra || null]);
@@ -296,46 +395,30 @@
   }
 
   function carte(c) {
-    var art = el("article", { class: "v-card " + classeCarte(c), "aria-label": c.acheteur });
-    // Étiquettes
+    var art = el("article", { class: "v-card " + classeCarte(c), id: "carte-" + c.id, tabindex: "-1", "aria-labelledby": "t-" + c.id });
     var top = el("div", { class: "v-top" });
     if (c.statut === "opportunite" && c.avis) top.appendChild(el("span", { class: "v-badge", text: AVIS[c.avis] }));
-    if (c.statut !== "opportunite") {
-      var coul = { gagne: "vert", en_preparation: "bleu", depose: "kraft" }[c.statut] || "";
-      top.appendChild(el("span", { class: "etiq " + coul, text: STATUTS[c.statut] }));
+    if (["gagne", "perdu", "sans_suite", "abandonne", "ecartee"].indexOf(c.statut) >= 0) {
+      top.appendChild(el("span", { class: "etiq" + (c.statut === "gagne" ? " vert" : ""), text: STATUTS[c.statut] }));
     }
     if (estNouveau(c) && c.statut === "opportunite") top.appendChild(el("span", { class: "neuf", text: "Nouveau" }));
     if (c.source === "client") top.appendChild(el("span", { class: "etiq", text: "Ajouté par vous" }));
     if (c.memoire && c.statut !== "en_preparation") top.appendChild(el("span", { class: "etiq bleu", text: "Mémoire Pli Gagnant" }));
+    var delai = pastilleDelai(c);
+    if (delai) top.appendChild(delai);
     if (top.childNodes.length) art.appendChild(top);
 
-    art.appendChild(el("h3", { text: c.acheteur }));
+    art.appendChild(el("h3", { id: "t-" + c.id, text: c.acheteur }));
     art.appendChild(el("p", { class: "v-objet", text: c.objet }));
-
-    // Faits
-    var faits = el("dl", { class: "v-faits" });
-    function fait(t, v, chaud) { if (v) faits.appendChild(el("div", {}, [el("dt", { text: t }), el("dd", { class: chaud ? "chaud" : "", text: v })])); }
-    if (c.date_limite) {
-      var n = PG.ecart(c.date_limite, jour());
-      var actif = ["opportunite", "en_preparation"].indexOf(c.statut) >= 0;
-      fait("Date limite", PG.dateLongue(c.date_limite) + (c.heure_limite ? " à " + c.heure_limite : "") + (actif ? " (" + PG.dansCombien(n) + ")" : ""),
-        actif && n <= 5);
-    }
-    fait("Lieu", c.lieu);
-    if (c.valeur_technique !== null && c.valeur_technique !== undefined) fait("Valeur technique", c.valeur_technique + " % de la note");
-    fait("Montant estimé", c.montant);
-    if (c.date_depot) fait("Déposé le", PG.dateLongue(c.date_depot));
-    if (c.date_resultat && ["gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0) fait("Résultat le", PG.dateLongue(c.date_resultat));
-    if (c.montant_attribue && c.statut === "gagne") fait("Montant du marché", c.montant_attribue);
-    if (faits.childNodes.length) art.appendChild(faits);
+    var meta = metaDe(c);
+    if (meta) art.appendChild(meta);
 
     if (c.raison && (c.statut === "opportunite" || c.statut === "en_preparation")) {
-      art.appendChild(el("div", { class: "v-avis" }, [el("b", { text: "Notre avis : " }), c.raison]));
+      art.appendChild(el("p", { class: "v-avis" }, [el("b", { text: "Notre avis : " }), c.raison]));
     }
     if (c.memoire) art.appendChild(suiviMemoire(c));
     if (c.note_client) art.appendChild(el("p", { class: "v-note" }, [el("b", { text: "Votre note : " }), c.note_client]));
 
-    // Date limite passée sans dépôt
     if (c.statut === "en_preparation" && passee(c)) {
       art.appendChild(el("div", { class: "alerte" }, [
         el("span", { text: "La date limite est passée. Avez-vous déposé votre offre ?" }),
@@ -346,43 +429,76 @@
       ]));
     }
 
-    var actions = actionsDe(c);
-    if (actions.length) art.appendChild(el("div", { class: "v-actions" }, actions));
-
-    // Liens
-    var liens = el("div", { class: "v-liens" });
-    if (c.url) {
-      liens.appendChild(el("a", { href: c.url, target: "_blank", rel: "noopener noreferrer",
-        text: "Voir l'avis" + (c.plateforme ? " sur " + c.plateforme : "") + (c.numero_avis ? " (n° " + c.numero_avis + ")" : "") + " ↗" }));
-    } else if (c.numero_avis || c.plateforme) {
-      liens.appendChild(el("span", { text: [c.plateforme, c.numero_avis ? "avis n° " + c.numero_avis : ""].filter(Boolean).join(", ") }));
-    }
-    liens.appendChild(el("button", { type: "button", class: "lien", text: c.note_client ? "Modifier ma note" : "Ajouter une note", onclick: function () { fenNote(c); } }));
-    var corr = correction(c);
-    if (corr) liens.appendChild(corr);
-    art.appendChild(liens);
+    var a = actionsDe(c);
+    if (a.boutons.length) art.appendChild(el("div", { class: "v-actions" + (a.boutons.length === 1 ? " seul" : "") }, a.boutons));
+    if (a.liens.length) art.appendChild(el("div", { class: "v-liens" }, a.liens));
     return art;
   }
 
-  function actionsDe(c) {
-    var a = [];
-    function bouton(texte, classe, fn) { return el("button", { type: "button", class: "btn petit " + (classe || ""), text: texte, onclick: fn }); }
-    if (c.statut === "opportunite" && gratuit()) {
-      a.push(bouton("Confier le mémoire à Pli Gagnant", "", function () { fenMemoire(c); }));
-      a.push(bouton("Je vais y répondre", "verrou", fenVerrou));
-      a.push(bouton("Pas pour moi", "plain", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); }));
-    } else if (c.statut === "opportunite") {
-      a.push(bouton("Je vais y répondre", "", function (ev) { changerStatut(c, "en_preparation", {}, ev.currentTarget); }));
-      a.push(bouton("Confier le mémoire à Pli Gagnant", "ghost", function () { fenMemoire(c); }));
-      a.push(bouton("Pas pour moi", "plain", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); }));
-    } else if (c.statut === "en_preparation" && !passee(c)) {
-      a.push(bouton("J'ai déposé mon offre", "", function () { fenDepot(c); }));
-      if (!c.memoire) a.push(bouton("Confier le mémoire à Pli Gagnant", "ghost", function () { fenMemoire(c); }));
-      a.push(bouton("Je ne réponds plus", "plain", function () { fenAbandon(c); }));
-    } else if (c.statut === "depose") {
-      a.push(bouton("J'ai reçu le résultat", "", function () { fenResultat(c); }));
+  // Compte à rebours visible d'un coup d'œil, pour ce qui est encore ouvert.
+  function pastilleDelai(c) {
+    if (["opportunite", "en_preparation"].indexOf(c.statut) < 0) return null;
+    var n = joursAvant(c);
+    if (n === null) return null;
+    if (n < 0) return null;
+    return el("span", { class: "delai" + (n <= 5 ? " urgent" : n <= 10 ? " bientot" : ""),
+      text: n === 0 ? "Aujourd'hui" : n === 1 ? "Demain" : "Dans " + n + " jours" });
+  }
+
+  function metaDe(c) {
+    var ul = el("ul", { class: "v-meta" });
+    function m(lbl, val, cls) { if (val) ul.appendChild(el("li", { class: cls || null }, [lbl ? el("span", { class: "lbl", text: lbl + " " }) : null, val])); }
+    var actif = ["opportunite", "en_preparation"].indexOf(c.statut) >= 0;
+    if (c.date_limite && (actif || ["abandonne", "ecartee"].indexOf(c.statut) >= 0)) {
+      m("Date limite", dateMoyenne(c.date_limite) + (c.heure_limite ? " à " + c.heure_limite : ""));
     }
-    return a;
+    if (c.date_depot && ["depose", "gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0) m("Déposé le", dateMoyenne(c.date_depot));
+    if (c.date_resultat && ["gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0) m("Résultat le", dateMoyenne(c.date_resultat));
+    m(null, c.lieu, "lieu");
+    if (c.valeur_technique !== null && c.valeur_technique !== undefined) m("Valeur technique", c.valeur_technique + " % de la note");
+    m("Montant estimé", c.montant);
+    if (c.montant_attribue && c.statut === "gagne") m("Marché", c.montant_attribue);
+    return ul.childNodes.length ? ul : null;
+  }
+
+  // Boutons principaux de la fiche, puis liens secondaires plus discrets.
+  function actionsDe(c) {
+    var B = [], L = [];
+    function bouton(texte, classe, fn) { return el("button", { type: "button", class: "btn petit " + (classe || ""), text: texte, onclick: fn }); }
+    // Libellé court sur téléphone quand deux boutons partagent la ligne.
+    function confier(classe) {
+      return el("button", { type: "button", class: "btn petit " + (classe || ""), onclick: function () { fenMemoire(c); } },
+        [el("span", { class: "long", text: "Confier le mémoire à Pli Gagnant" }), el("span", { class: "court", text: "Confier le mémoire" })]);
+    }
+    function lien(texte, fn, classe) { return el("button", { type: "button", class: "lien " + (classe || ""), text: texte, onclick: fn }); }
+    var avis = null;
+    if (c.url) {
+      avis = el("a", { href: c.url, target: "_blank", rel: "noopener noreferrer", title: c.numero_avis ? "Avis n° " + c.numero_avis : null,
+        text: "Voir l'avis" + (c.plateforme ? " sur " + c.plateforme : "") + " ↗" });
+    } else if (c.numero_avis || c.plateforme) {
+      avis = el("span", { class: "ref", text: [c.plateforme, c.numero_avis ? "avis n° " + c.numero_avis : ""].filter(Boolean).join(", ") });
+    }
+    var note = lien(c.note_client ? "Modifier ma note" : "Ajouter une note", function () { fenNote(c); });
+    var pasPourMoi = lien("Pas pour moi", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); });
+    if (c.statut === "opportunite" && gratuit()) {
+      B.push(confier(""));
+      L.push(avis, pasPourMoi, note, lien("Je vais y répondre", fenVerrou, "verrou"));
+    } else if (c.statut === "opportunite") {
+      B.push(bouton("Je vais y répondre", "", function (ev) { changerStatut(c, "en_preparation", {}, ev.currentTarget); }));
+      B.push(confier("ghost"));
+      L.push(avis, pasPourMoi, note);
+    } else if (c.statut === "en_preparation" && !passee(c)) {
+      B.push(bouton("J'ai déposé mon offre", "", function () { fenDepot(c); }));
+      if (!c.memoire) B.push(confier("ghost"));
+      L.push(avis, note, lien("Je ne réponds plus", function () { fenAbandon(c); }));
+    } else if (c.statut === "depose") {
+      B.push(bouton("J'ai reçu le résultat", "", function () { fenResultat(c); }));
+      L.push(avis, note);
+    } else {
+      L.push(avis, note);
+    }
+    L.push(correction(c));
+    return { boutons: B, liens: L.filter(Boolean) };
   }
 
   function correction(c) {
@@ -460,7 +576,7 @@
       if (!r) return false;
       var etaitGratuit = gratuit();
       if (etaitGratuit) etat.d.entreprise.formule = "client";
-      remplacer(r); etat.onglet = "preparation"; rendre();
+      remplacer(r); allerA("preparation", r.id);
       PG.toast(etaitGratuit ? "Demande envoyée, et votre suivi est activé. Nous vous écrivons sous 24 h ouvrées."
                             : "Demande envoyée. Nous vous écrivons sous 24 h ouvrées.", { duree: 6000 });
       return true;
@@ -696,7 +812,7 @@
     sb.auth.onAuthStateChange(function (ev) { if (ev === "SIGNED_OUT") location.replace("/espace/?deconnecte=1"); });
     $("b-deconnexion").addEventListener("click", async function () { await sb.auth.signOut(); location.replace("/espace/?deconnecte=1"); });
     $("b-compte").addEventListener("click", function () { if (etat.d) fenCompte(); });
-    $("b-ajouter").addEventListener("click", function () { if (!etat.d) return; if (gratuit()) fenVerrou(); else fenAjouter(); });
+    $("b-ajouter").addEventListener("click", ajouter);
 
     var dejaVu = PG.lireSession("pg-visite-prec");
     var visite = dejaVu === null;
@@ -706,9 +822,6 @@
     var h = location.hash.slice(1);
     var memo = PG.lireStock("pg-onglet", "opportunites");
     etat.onglet = ONGLETS.some(function (t) { return t.id === h; }) ? h : ONGLETS.some(function (t) { return t.id === memo; }) ? memo : "opportunites";
-    // Une action attend le client : on ouvre directement le bon onglet.
-    var g = groupes();
-    if (!h && g.preparation.some(passee)) etat.onglet = "preparation";
     rendre();
     if (new URLSearchParams(location.search).get("bienvenue")) PG.toast("Votre mot de passe est enregistré. Bienvenue !");
 
