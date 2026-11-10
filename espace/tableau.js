@@ -117,6 +117,12 @@
     var d = etat.d, g = groupes();
     $("qui").textContent = d.entreprise.nom;
     $("qui").title = d.moi.email;
+    var lEnt = $("l-entreprise");
+    if (lEnt) {
+      var nPa = (d.pieces_alertes || []).length;
+      lEnt.classList.toggle("alerte", nPa > 0);
+      lEnt.title = nPa ? pluriel(nPa, "pièce administrative à renouveler", "pièces administratives à renouveler") : "";
+    }
     rendreHello(d, g);
     rendreOnglets(g);
     rendreGuide();
@@ -182,6 +188,14 @@
       L.push({ p: 2, urgent: joursAvant(c) <= 2, bouton: "Voir", action: voir(c, "preparation"),
         texte: [b(c.acheteur), " : date limite " + PG.dansCombien(joursAvant(c))] });
     });
+    var pa = (etat.d && etat.d.pieces_alertes) || [];
+    if (pa.length) {
+      var p0 = pa[0];
+      L.push({ p: 4.5, urgent: !!p0.expiree, bouton: "Mettre à jour", action: function () { location.href = "/espace/entreprise/#pieces"; },
+        texte: pa.length > 1
+          ? [b(pluriel(pa.length, "pièce administrative", "pièces administratives")), " à renouveler, dont " + p0.nom + (p0.expiree ? " (expirée)" : " avant le " + dateMoyenne(p0.date_fin))]
+          : [b(p0.nom), p0.expiree ? " : expirée depuis le " + dateMoyenne(p0.date_fin) + ", à renouveler" : " : à renouveler avant le " + dateMoyenne(p0.date_fin)] });
+    }
     var nouv = g.opportunites.filter(estNouveau).length;
     if (nouv) {
       L.push({ p: 3, bouton: "Voir", texte: [el("b", { text: pluriel(nouv, "nouvelle opportunité", "nouvelles opportunités") }), " depuis votre dernière visite"],
@@ -197,6 +211,11 @@
     if (attente) {
       L.push({ p: 5, bouton: "Indiquer", action: function () { fenResultat(attente); },
         texte: [b(attente.acheteur), " : résultat reçu ? Offre déposée le " + dateMoyenne(attente.date_depot)] });
+    }
+    var e = etat.d && etat.d.entreprise;
+    if (e && e.veille_active && e.profil_rempli === false) {
+      L.push({ p: 7, bouton: "Compléter", action: function () { location.href = "/espace/entreprise/#profil"; },
+        texte: [b("Le profil de votre entreprise"), " : 2 minutes pour des avis à votre taille (facultatif)"] });
     }
     return L.sort(function (a, b) { return a.p - b.p; });
   }
@@ -817,6 +836,7 @@
       el("li", { text: "Le suivi de vos réponses en préparation, avec l'avancement de votre mémoire." }),
       el("li", { text: "Vos dépôts et vos résultats, gagnés ou perdus, dans un historique." }),
       el("li", { text: "L'ajout des appels d'offres que vous trouvez ailleurs." }),
+      el("li", { text: "Vos pièces administratives au même endroit, avec un rappel avant qu'elles expirent." }),
       el("li", { text: "L'accès de vos collaborateurs à votre espace." })
     ]);
   }
