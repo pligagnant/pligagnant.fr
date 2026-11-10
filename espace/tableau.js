@@ -140,11 +140,15 @@
   function rendreHello(d, g) {
     var e = d.entreprise, h = $("hello");
     h.textContent = "";
+    var enCours = e.veille_active && e.a_examiner ? pluriel(e.a_examiner, "nouvelle consultation repérée", "nouvelles consultations repérées") +
+      ", notre avis arrive " + (e.veille_prochaine && e.veille_prochaine > jour() ? "le " + dateMoyenne(e.veille_prochaine) : "dans la journée") : "";
     h.appendChild(el("div", { class: "hello-tete" }, [
       el("h1", { text: e.nom }),
-      e.veille_active && e.metier ? el("p", { class: "sous", text: "Veille " + e.metier + (e.zone ? " dans " + e.zone : "") }) : null,
-      e.veille_active && e.veille_maj ? el("p", { class: "maj", text: "Mise à jour le " + dateMoyenne(e.veille_maj) +
-        (e.veille_prochaine ? " · prochaine le " + dateMoyenne(e.veille_prochaine) : "") }) : null
+      e.veille_active && e.metier ? el("p", { class: "sous" }, ["Veille " + e.metier + (e.zone ? " dans " + e.zone : "") + " ",
+        el("button", { type: "button", class: "lien regler", text: "Régler ma veille", onclick: fenVeille })]) : null,
+      e.veille_active && (e.veille_maj || enCours) ? el("p", { class: "maj", text: [e.veille_maj ? "Mise à jour chaque jour ouvré, la dernière le " + dateMoyenne(e.veille_maj) : "", enCours]
+        .filter(Boolean).join(" · ") }) : null,
+      !e.veille_active ? el("p", { class: "sous" }, [el("button", { type: "button", class: "btn petit blanc", text: "Recevoir la veille gratuite des appels d'offres", onclick: fenVeille })]) : null
     ]));
     if (gratuit()) {
       h.appendChild(el("p", { class: "bandeau" }, [el("b", { class: "verrou", text: "Compte gratuit : " }),
@@ -270,7 +274,7 @@
           PG.ecrireStock("pg-guide-ferme", "1"); history.replaceState(null, "", location.pathname + location.hash); zone.textContent = ""; } })
       ]),
       gratuit() ? el("ol", {}, [
-        el("li", {}, [el("b", { text: "Vos opportunités" }), " : les consultations ouvertes dans votre métier et vos départements, avec notre avis sur chacune. Nous en ajoutons le lundi, le mercredi et le vendredi."]),
+        el("li", {}, [el("b", { text: "Vos opportunités" }), " : les consultations ouvertes dans votre métier et vos départements, avec notre avis sur chacune. Nous en ajoutons chaque jour ouvré ; « Régler ma veille » vous permet de l'affiner."]),
         el("li", {}, [el("b", { text: "Une consultation vous intéresse ?" }), " Cliquez sur « Confier le mémoire à Pli Gagnant » : nous vous écrivons sous 24 h ouvrées pour récupérer le dossier."]),
         el("li", {}, [el("b", { text: "Les outils grisés" }), " (suivi de vos réponses, dépôts, résultats, collaborateurs) s'activent avec ce premier mémoire."])
       ]) : el("ol", {}, [
@@ -366,20 +370,20 @@
   }
   function videOpportunites() {
     var e = etat.d.entreprise;
-    if (e.veille_active && !e.veille_maj) {
-      return vide("Votre première sélection est en préparation",
-        "Nous cherchons les consultations ouvertes " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone : "") +
-        ". Elles arrivent ici sous un jour ouvré, avec notre avis sur chacune, et nous vous prévenons par email.");
+    var regler = el("div", { class: "v-actions" }, [el("button", { type: "button", class: "btn petit ghost", text: "Régler ma veille", onclick: fenVeille })]);
+    if (e.veille_active && (!e.veille_maj || e.a_examiner)) {
+      return vide(e.a_examiner ? pluriel(e.a_examiner, "consultation repérée", "consultations repérées") + ", notre avis arrive bientôt" : "Votre première sélection est en préparation",
+        "Nous lisons les consultations ouvertes " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone : "") +
+        ". Elles arrivent ici sous un jour ouvré, avec notre avis sur chacune, et nous vous prévenons par email.", regler);
     }
     if (e.veille_active) {
       return vide("Aucune consultation ouverte à vous proposer en ce moment",
-        "Nous cherchons pour vous " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone + " " : "") +
-        "le lundi, le mercredi et le vendredi. Les nouvelles opportunités apparaîtront ici.");
+        "Chaque jour ouvré, nous lisons toutes les consultations publiées au BOAMP " + (e.metier ? "en " + e.metier + " " : "") + (e.zone ? "dans " + e.zone : "") +
+        ". Les nouvelles opportunités apparaîtront ici. Vous pouvez élargir votre veille : départements voisins, mots à inclure, taille des marchés.", regler);
     }
     return vide("Recevez les appels d'offres de votre métier",
-      "Notre veille est gratuite : nous repérons les consultations de votre métier et de vos départements, et vous donnons notre avis sur chacune.",
-      el("div", { class: "v-actions" }, [el("a", { class: "btn petit", href: "mailto:" + PG.CONTACT + "?subject=VEILLE&body=" +
-        encodeURIComponent("Bonjour,\n\nJe souhaite la veille gratuite des appels d'offres dans mon espace client.\n\nMétier : \nDépartements : \n"), text: "Demander la veille gratuite" })]));
+      "Notre veille est gratuite : chaque jour ouvré, nous repérons les consultations de votre métier dans vos départements, et vous donnons notre avis sur chacune.",
+      el("div", { class: "v-actions" }, [el("button", { type: "button", class: "btn petit", text: "Activer ma veille gratuite", onclick: fenVeille })]));
   }
 
   function listeCartes(cs) {
@@ -478,19 +482,21 @@
     } else if (c.numero_avis || c.plateforme) {
       avis = el("span", { class: "ref", text: [c.plateforme, c.numero_avis ? "avis n° " + c.numero_avis : ""].filter(Boolean).join(", ") });
     }
+    var dossier = c.url_dossier ? el("a", { href: c.url_dossier, target: "_blank", rel: "noopener noreferrer", text: "Dossier de consultation ↗",
+      title: "Le règlement et le cahier des charges, sur la plateforme de l'acheteur" }) : null;
     var note = lien(c.note_client ? "Modifier ma note" : "Ajouter une note", function () { fenNote(c); });
     var pasPourMoi = lien("Pas pour moi", function (ev) { changerStatut(c, "ecartee", { annulable: true }, ev.currentTarget); });
     if (c.statut === "opportunite" && gratuit()) {
       B.push(confier(""));
-      L.push(avis, pasPourMoi, note, lien("Je vais y répondre", fenVerrou, "verrou"));
+      L.push(dossier, avis, pasPourMoi, note, lien("Je vais y répondre", fenVerrou, "verrou"));
     } else if (c.statut === "opportunite") {
       B.push(bouton("Je vais y répondre", "", function (ev) { changerStatut(c, "en_preparation", {}, ev.currentTarget); }));
       B.push(confier("ghost"));
-      L.push(avis, pasPourMoi, note);
+      L.push(dossier, avis, pasPourMoi, note);
     } else if (c.statut === "en_preparation" && !passee(c)) {
       B.push(bouton("J'ai déposé mon offre", "", function () { fenDepot(c); }));
       if (!c.memoire) B.push(confier("ghost"));
-      L.push(avis, note, lien("Je ne réponds plus", function () { fenAbandon(c); }));
+      L.push(dossier, avis, note, lien("Je ne réponds plus", function () { fenAbandon(c); }));
     } else if (c.statut === "depose") {
       B.push(bouton("J'ai reçu le résultat", "", function () { fenResultat(c); }));
       L.push(avis, note);
@@ -581,6 +587,76 @@
                             : "Demande envoyée. Nous vous écrivons sous 24 h ouvrées.", { duree: 6000 });
       return true;
     }, "Envoyer ma demande");
+  }
+
+  // ------------------------------------------------------------------ réglages de la veille
+  var TAILLES = [["mapa", "Moins de 90 000 € HT", "Les plus accessibles aux petites entreprises"],
+                 ["national", "De 90 000 € HT aux seuils européens", "Jusqu'à 221 000 € HT en services, 5,5 M€ en travaux"],
+                 ["europeen", "Au-dessus des seuils européens", "Les plus gros marchés, souvent en lots"]];
+  function motsEnTexte(l) { return (l || []).join(", "); }
+  function texteEnMots(t) { return t.split(/[,;\n]+/).map(function (x) { return x.trim(); }).filter(function (x) { return x.length >= 3; }).slice(0, 12); }
+
+  function fenVeille() {
+    var e = etat.d.entreprise, active = e.veille_active;
+    var metiers = etat.d.metiers || [];
+    var sel = el("select", { required: true }, [el("option", { value: "", text: "Choisissez…" })]
+      .concat(metiers.map(function (m) { return el("option", { value: m[0], text: m[1] }); }))
+      .concat([el("option", { value: "autre", text: "Autre métier…" })]));
+    var connu = metiers.some(function (m) { return m[0] === e.metier; });
+    sel.value = e.metier ? (connu ? e.metier : "autre") : "";
+    var autre = el("input", { type: "text", maxlength: "80", value: connu ? "" : (e.metier || ""), placeholder: "Ex. : élagage, désamiantage, restauration collective" });
+    var champAutre = champ("Précisez votre métier", autre);
+    champAutre.hidden = sel.value !== "autre";
+    sel.addEventListener("change", function () { champAutre.hidden = sel.value !== "autre"; if (!champAutre.hidden) autre.focus(); });
+
+    var saisie = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", id: "rv-dep" });
+    var listeDep = el("ul", { class: "suggestions", id: "rv-dep-liste", role: "listbox", hidden: true });
+    var puces = el("ul", { class: "puces", "aria-label": "Départements choisis" });
+    var aide = el("small", { text: "Jusqu'à 8 départements : là où vous travaillez, et les départements voisins si vous vous déplacez." });
+    var deps = window.PGDepartements.creer({ saisie: saisie, liste: listeDep, puces: puces, aide: aide, max: 8, valeurs: e.departements || [] });
+    var champDep = el("div", { class: "champ" }, [el("label", { for: "rv-dep", text: "Vos départements" }), puces,
+      el("div", { class: "combo" }, [saisie, listeDep]), aide]);
+
+    var inclus = el("input", { type: "text", maxlength: "500", value: motsEnTexte(e.mots_inclus), placeholder: "Ex. : élagage, cimetière, aire de jeux" });
+    var exclus = el("input", { type: "text", maxlength: "500", value: motsEnTexte(e.mots_exclus), placeholder: "Ex. : location, fourniture, déneigement" });
+    var tailles = e.tailles && e.tailles.length ? e.tailles : ["mapa", "national", "europeen"];
+    var cases = TAILLES.map(function (t) {
+      var c = el("input", { type: "checkbox", value: t[0] });
+      c.checked = tailles.indexOf(t[0]) >= 0;
+      return el("label", { class: "case" }, [c, el("span", {}, [el("b", { text: t[1] }), el("small", { text: t[2] })])]);
+    });
+    var alertes = el("input", { type: "checkbox" });
+    alertes.checked = e.alertes !== false;
+
+    var d = fenetre(active ? "Régler ma veille" : "Activer ma veille gratuite", [
+      el("p", { class: "rappel", text: "Chaque jour ouvré, nous lisons toutes les consultations publiées au BOAMP et vous gardons celles qui correspondent à ces réglages, avec notre avis." }),
+      champ("Votre métier", sel), champAutre, champDep,
+      champ("Mots à inclure (facultatif)", inclus, "Nous ajoutons aussi les consultations dont l'objet contient l'un de ces mots. Séparez-les par des virgules."),
+      champ("Mots à exclure (facultatif)", exclus, "Nous écartons les consultations dont l'objet contient l'un de ces mots."),
+      el("fieldset", { class: "champ cases" }, [el("legend", { text: "Taille des marchés" })].concat(cases)),
+      el("label", { class: "case" }, [alertes, el("span", {}, [el("b", { text: "M'envoyer un email le jour même" }),
+        el("small", { text: "quand une consultation que nous vous conseillons de tenter arrive (un email par jour au plus)." })])])
+    ], async function (f, msg, ok) {
+      var metier = sel.value === "autre" ? autre.value.trim() : sel.value;
+      deps.completer();
+      var lesDeps = deps.valeurs();
+      var lesTailles = cases.map(function (l) { return l.querySelector("input"); }).filter(function (c) { return c.checked; }).map(function (c) { return c.value; });
+      if (!sel.value) { msg.textContent = "Choisissez votre métier."; sel.focus(); return false; }
+      if (metier.length < 3) { msg.textContent = "Précisez votre métier."; autre.focus(); return false; }
+      if (!lesDeps.length) { msg.textContent = "Choisissez au moins un département."; saisie.focus(); return false; }
+      if (!lesTailles.length) { msg.textContent = "Choisissez au moins une taille de marchés."; cases[0].querySelector("input").focus(); return false; }
+      var r = await appeler("client_regler_veille", { p_metier: metier, p_departements: lesDeps, p_mots_inclus: texteEnMots(inclus.value),
+        p_mots_exclus: texteEnMots(exclus.value), p_tailles: lesTailles, p_alertes: alertes.checked }, ok);
+      if (!r) return false;
+      await charger(false);
+      rendre();
+      PG.toast(!active ? "Votre veille est activée. Notre première sélection arrive sous un jour ouvré."
+        : r.a_examiner ? "Réglages enregistrés. " + pluriel(r.a_examiner, "nouvelle consultation repérée", "nouvelles consultations repérées") + " : notre avis arrive à la prochaine mise à jour."
+        : "Réglages enregistrés.", { duree: 6000 });
+      return true;
+    }, active ? "Enregistrer" : "Activer ma veille");
+    d.classList.add("large");
+    sel.focus();
   }
 
   function fenDepot(c) {

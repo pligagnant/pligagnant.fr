@@ -178,6 +178,15 @@ dialog.fen::backdrop { background: rgba(15, 27, 61, 0.45); }
 .fen .prix span { display: block; font-weight: 500; color: var(--muted); font-size: 0.93rem; }
 .fen .attention { background: var(--highlight); border-radius: 8px; padding: 10px 14px; font-weight: 700; }
 .fen h3 { font-size: 1.08rem; margin-top: 6px; }
+dialog.fen.large { width: min(640px, calc(100vw - 24px)); }
+.fen fieldset.cases { border: 0; padding: 0; margin: 0; gap: 8px; }
+.fen fieldset.cases legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
+.case { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; }
+.case:hover { border-color: var(--blue); }
+.case input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--blue); }
+.case span { display: flex; flex-direction: column; gap: 2px; }
+.case small { color: var(--muted); font-size: 0.9rem; }
+.esp-hello .regler { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 .equipe { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .equipe li { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); }
 .equipe li > span { min-width: 0; overflow-wrap: anywhere; }
