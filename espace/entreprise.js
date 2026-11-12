@@ -4,6 +4,7 @@
   var PG = window.PG, sb = PG.client, el = PG.el;
   var $ = function (id) { return document.getElementById(id); };
   var SEAU = "pieces";
+  var ONGLETS = ["profil", "questionnaire", "pieces"];
   var etat = { d: null, onglet: "profil", liens: {}, liensLe: 0, modifie: false };
 
   // ------------------------------------------------------------------ ce que nous proposons selon le métier
@@ -179,19 +180,21 @@
     bp.textContent = "Pièces administratives";
     bp.classList.toggle("verrou", gratuit());
     if (aRenouveler) bp.appendChild(el("span", { class: "compte", title: "à renouveler", text: String(aRenouveler) }));
-    ["profil", "pieces"].forEach(function (o) {
+    ONGLETS.forEach(function (o) {
       var b = $("o-" + o);
       b.setAttribute("aria-selected", String(etat.onglet === o));
       b.tabIndex = etat.onglet === o ? 0 : -1;
     });
     $("panneau").setAttribute("aria-labelledby", "o-" + etat.onglet);
     var p = $("panneau"); p.textContent = "";
-    if (etat.onglet === "profil") rendreProfil(p); else rendrePieces(p);
+    if (etat.onglet === "profil") rendreProfil(p);
+    else if (etat.onglet === "questionnaire") window.PG_QUESTIONNAIRE.rendre(p, { etat: etat, appeler: appeler, cleMetier: cleMetier });
+    else rendrePieces(p);
     $("corps").hidden = false;
   }
   function choisir(o, focus) {
     if (o === etat.onglet) return;
-    if (etat.modifie && etat.onglet === "profil" && !confirm("Vos modifications du profil ne sont pas enregistrées. Les abandonner ?")) return;
+    if (etat.modifie && etat.onglet !== "pieces" && !confirm("Vos modifications ne sont pas enregistrées. Les abandonner ?")) return;
     etat.modifie = false;
     etat.onglet = o;
     if (location.hash.slice(1) !== o) history.replaceState(null, "", "#" + o);
@@ -622,18 +625,22 @@
     if (!s.data || !s.data.session) { location.replace("/espace/"); return; }
     sb.auth.onAuthStateChange(function (ev) { if (ev === "SIGNED_OUT") location.replace("/espace/?deconnecte=1"); });
     $("b-deconnexion").addEventListener("click", async function () { await sb.auth.signOut(); location.replace("/espace/?deconnecte=1"); });
-    ["profil", "pieces"].forEach(function (o) { $("o-" + o).addEventListener("click", function () { choisir(o); }); });
+    ONGLETS.forEach(function (o) { $("o-" + o).addEventListener("click", function () { choisir(o); }); });
     $("onglets").addEventListener("keydown", function (ev) {
-      if (ev.key === "ArrowRight" || ev.key === "ArrowLeft") { ev.preventDefault(); choisir(etat.onglet === "profil" ? "pieces" : "profil", true); }
+      if (ev.key === "ArrowRight" || ev.key === "ArrowLeft") {
+        ev.preventDefault();
+        var i = ONGLETS.indexOf(etat.onglet) + (ev.key === "ArrowRight" ? 1 : ONGLETS.length - 1);
+        choisir(ONGLETS[i % ONGLETS.length], true);
+      }
     });
     window.addEventListener("beforeunload", function (ev) { if (etat.modifie) { ev.preventDefault(); ev.returnValue = ""; } });
     if (!(await charger())) return;
     var h = location.hash.slice(1);
-    etat.onglet = h === "pieces" ? "pieces" : "profil";
+    etat.onglet = ONGLETS.indexOf(h) >= 0 ? h : "profil";
     rendre();
     window.addEventListener("hashchange", function () {
       var x = location.hash.slice(1);
-      if ((x === "profil" || x === "pieces") && x !== etat.onglet) choisir(x);
+      if (ONGLETS.indexOf(x) >= 0 && x !== etat.onglet) choisir(x);
     });
     // Liens des fichiers valables une heure : on les renouvelle au retour sur la page.
     document.addEventListener("visibilitychange", async function () {
