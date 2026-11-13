@@ -126,7 +126,9 @@
     ["c10", "Sous-traitance ou groupement prévu ? Avec qui, pour quoi ?"],
     ["c11", "Variantes ou prestations supplémentaires : y répondez-vous ?"],
     ["c12", "Qu'est-ce qui vous inquiète dans ce dossier ? Qu'est-ce qui fera la différence ?"],
-    ["c13", "Où en est votre offre de prix ?", "Envoyez-nous le bordereau ou le détail rempli : le mémoire doit dire la même chose."]
+    ["c13", "Où en est votre offre de prix ?", "Envoyez-nous le bordereau ou le détail rempli : le mémoire doit dire la même chose."],
+    ["c14", "Pour chaque prestation de votre prix : combien de personnes, combien d'heures ou de passages ?", "Les chiffres qui vous ont servi à calculer votre prix. L'acheteur les compare à sa propre estimation et peut vous les redemander."],
+    ["c15", "Vos chiffres pour l'environnement sur ce marché", "Part de produits écolabellisés, matériel électrique, distance du dépôt et des fournisseurs, part des déchets valorisés et où. Un critère environnemental est désormais noté dans chaque marché."]
   ];
 
   function question(q, valeurs) {
