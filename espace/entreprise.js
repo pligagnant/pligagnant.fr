@@ -86,7 +86,7 @@
 
   var CAPACITES = [["", "Je ne sais pas"], ["moins_40k", "Jusqu'à 40 000 € HT"], ["40_90k", "De 40 000 à 90 000 € HT"],
                    ["90_250k", "De 90 000 à 250 000 € HT"], ["250k_1m", "De 250 000 € à 1 M€ HT"], ["plus_1m", "Plus de 1 M€ HT"]];
-  var EXPERIENCE = [["jamais", "Jamais encore"], ["parfois", "Quelques fois"], ["souvent", "Régulièrement"]];
+  var EXPERIENCE = [["jamais", "Jamais"], ["parfois", "Quelques fois"], ["souvent", "Souvent"]];
 
   // ------------------------------------------------------------------ pièces : types usuels
   var TYPES = {
@@ -118,9 +118,9 @@
     return n < 0 ? "expire" : n <= 30 ? "bientot" : "ok";
   }
   function texteValidite(p) {
-    if (!p.date_fin) return p.date_document ? "Document du " + dateTxt(p.date_document) : "Sans date de fin";
+    if (!p.date_fin) return p.date_document ? "du " + dateTxt(p.date_document) : "sans date de fin";
     var e = etatDate(p.date_fin);
-    return e === "expire" ? "Expiré depuis le " + dateTxt(p.date_fin) : e === "bientot" ? "À renouveler avant le " + dateTxt(p.date_fin) : "Valable jusqu'au " + dateTxt(p.date_fin);
+    return e === "expire" ? "expiré le " + dateTxt(p.date_fin) : e === "bientot" ? "à renouveler avant le " + dateTxt(p.date_fin) : "valable jusqu'au " + dateTxt(p.date_fin);
   }
   function taille(o) { return !o ? "" : o < 1024 * 1024 ? Math.max(1, Math.round(o / 1024)) + " Ko" : (o / 1024 / 1024).toFixed(1).replace(".", ",") + " Mo"; }
 
@@ -172,18 +172,14 @@
     var h = $("hello"); h.textContent = "";
     h.appendChild(el("div", { class: "hello-tete" }, [
       el("h1", { text: "Mon entreprise" }),
-      el("p", { class: "sous", text: e.nom + (e.metier ? " · " + e.metier : "") })
+      el("p", { class: "sous", text: e.nom })
     ]));
-    var aRenouveler = gratuit() ? 0 : alertes().length;
-    var bp = $("o-pieces");
-    bp.textContent = "Pièces administratives";
-    bp.classList.toggle("verrou", gratuit());
-    if (aRenouveler) bp.appendChild(el("span", { class: "compte", title: "à renouveler", text: String(aRenouveler) }));
     ["profil", "pieces"].forEach(function (o) {
       var b = $("o-" + o);
       b.setAttribute("aria-selected", String(etat.onglet === o));
       b.tabIndex = etat.onglet === o ? 0 : -1;
     });
+    $("o-pieces").classList.toggle("verrou", gratuit());
     $("panneau").setAttribute("aria-labelledby", "o-" + etat.onglet);
     var p = $("panneau"); p.textContent = "";
     if (etat.onglet === "profil") rendreProfil(p); else rendrePieces(p);
@@ -207,127 +203,94 @@
     input.id = id;
     return el("div", { class: "champ" }, [el("label", { for: id, text: label }), input, aide ? el("small", { text: aide }) : null]);
   }
-  function avecUnite(input, unite) { return el("div", { class: "unite" }, [input, el("span", { text: unite, "aria-hidden": "true" })]); }
-  function champUnite(label, input, unite, aide) {
-    var c = champ(label, input, aide);
-    c.insertBefore(avecUnite(input, unite), c.querySelector("small"));
-    return c;
-  }
   function nombre(valeur, max, placeholder) {
     return el("input", { type: "text", inputmode: "numeric", maxlength: String(max), value: valeur === undefined || valeur === null ? "" : String(valeur), placeholder: placeholder || "", autocomplete: "off" });
   }
 
   function rendreProfil(racine) {
     var p = etat.d.profil || {}, g = guide();
-    racine.appendChild(el("p", { class: "ent-intro" }, [el("b", { text: "Tout est facultatif. " }),
-      "Ces informations nous aident à juger si une consultation est à votre taille et à rédiger vos mémoires plus vite. Remplissez ce que vous voulez, quand vous voulez."]));
-    var f = el("form", { class: "profil", novalidate: true });
+    racine.appendChild(el("p", { class: "ent-intro", text: "Facultatif. Ces informations nous aident à juger les consultations et à préparer vos mémoires." }));
+    var f = el("form", { class: "formulaire", novalidate: true });
 
-    // Entreprise
-    var siret = el("input", { type: "text", inputmode: "numeric", maxlength: "17", value: p.siret || "", placeholder: "14 chiffres", autocomplete: "off" });
+    var siret = el("input", { type: "text", inputmode: "numeric", maxlength: "17", value: p.siret || "", autocomplete: "off" });
     var ville = el("input", { type: "text", maxlength: "100", value: p.ville || etat.d.entreprise.ville || "", autocomplete: "address-level2" });
-    var annee = nombre(p.annee_creation, 4, "ex. 2012");
-    var effectif = nombre(p.effectif, 5, "ex. 6");
-    var ca = el("input", { type: "text", maxlength: "40", value: p.ca || "", placeholder: "ex. 850 000 €" });
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Votre entreprise" }),
-      el("div", { class: "deux-champs" }, [champ("SIRET", siret), champ("Ville", ville)]),
-      el("div", { class: "trois-champs" }, [champUnite("Effectif", effectif, "pers.", "Vous compris."), champ("Année de création", annee), champ("Chiffre d'affaires", ca, "Dernier exercice.")])
-    ]));
+    var effectif = nombre(p.effectif, 5);
+    var annee = nombre(p.annee_creation, 4);
+    var ca = el("input", { type: "text", maxlength: "40", value: p.ca || "" });
+    f.appendChild(el("h2", { text: "Entreprise" }));
+    f.appendChild(el("div", { class: "ligne" }, [champ("SIRET", siret), champ("Ville", ville)]));
+    f.appendChild(el("div", { class: "ligne courts" }, [champ("Effectif, vous compris", effectif), champ("Année de création", annee), champ("Chiffre d'affaires", ca)]));
 
-    // Marchés visés
     var capacite = el("select", {}, CAPACITES.map(function (c) { return el("option", { value: c[0], text: c[1] }); }));
     capacite.value = p.capacite || "";
-    var rayon = nombre(p.rayon_km, 4, "ex. 50");
-    var exp = el("fieldset", { class: "choix ligne" }, [el("legend", { text: "Avez-vous déjà répondu à des marchés publics ?" })]);
+    var rayon = nombre(p.rayon_km, 4);
+    var exp = el("fieldset", { class: "radios" }, [el("legend", { text: "Avez-vous déjà répondu à des marchés publics ?" })]);
     EXPERIENCE.forEach(function (o) {
       var r = el("input", { type: "radio", name: "exp", value: o[0] });
       r.checked = p.marches_publics === o[0];
       exp.appendChild(el("label", {}, [r, o[1]]));
     });
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Les marchés qui vous conviennent" }),
-      el("p", { class: "aide", text: "Pour que nos avis tiennent compte de la taille de votre entreprise et de vos déplacements." }),
-      el("div", { class: "deux-champs" }, [champ("Montant de marché que vous pouvez assumer", capacite, "Par an, ou pour un chantier."),
-        champUnite("Distance maximale", rayon, "km", "Depuis votre entreprise.")]),
-      exp
-    ]));
+    f.appendChild(el("h2", { text: "Marchés visés" }));
+    f.appendChild(el("div", { class: "ligne" }, [champ("Montant de marché que vous pouvez prendre", capacite), champ("Distance maximale (km)", rayon)]));
+    f.appendChild(exp);
 
-    // Qualifications : suggestions selon le métier + autres
     var choisies = (p.qualifications || []).slice();
-    var connues = g.qualifs.filter(function (q) { return choisies.indexOf(q) >= 0; });
-    var autresQ = choisies.filter(function (q) { return g.qualifs.indexOf(q) < 0; });
-    var puces = el("div", { class: "puces-choix", role: "group", "aria-label": "Qualifications courantes dans votre métier" });
+    var coches = el("div", { class: "coches" });
     g.qualifs.forEach(function (q) {
-      var b = el("button", { type: "button", "aria-pressed": String(connues.indexOf(q) >= 0), text: q });
-      b.addEventListener("click", function () { b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true")); etat.modifie = true; });
-      puces.appendChild(b);
+      var c = el("input", { type: "checkbox", value: q });
+      c.checked = choisies.indexOf(q) >= 0;
+      coches.appendChild(el("label", {}, [c, q]));
     });
-    var autresQual = el("input", { type: "text", maxlength: "400", value: autresQ.join(", "), placeholder: "Séparez-les par des virgules" });
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Qualifications et certifications" }),
-      el("p", { class: "aide", text: "Touchez celles que vous avez. Vous pourrez déposer les certificats dans « Pièces administratives »." }),
-      puces, champ("Autres qualifications", autresQual)
-    ]));
+    var autresQual = el("input", { type: "text", maxlength: "400", value: choisies.filter(function (q) { return g.qualifs.indexOf(q) < 0; }).join(", "),
+      placeholder: "Séparées par des virgules" });
+    f.appendChild(el("h2", { text: "Qualifications" }));
+    f.appendChild(coches);
+    f.appendChild(champ("Autres", autresQual));
 
-    // Matériel : texte libre + suggestions qui s'ajoutent
-    var materiel = el("textarea", { maxlength: "1000", placeholder: "Vos principaux engins et équipements, avec leur nombre si possible." });
+    var materiel = el("textarea", { maxlength: "1000", placeholder: "Ex. : " + g.materiel.slice(0, 3).join(", ").toLowerCase() + "…" });
     materiel.value = p.materiel || "";
-    var sugg = el("div", { class: "puces-choix ajout", role: "group", "aria-label": "Ajouter du matériel courant" });
-    function majSugg() {
-      var t = plat(materiel.value);
-      Array.prototype.forEach.call(sugg.children, function (b) { b.hidden = t.indexOf(plat(b.dataset.v)) >= 0; });
-    }
-    g.materiel.forEach(function (m) {
-      sugg.appendChild(el("button", { type: "button", "data-v": m, text: m, onclick: function () {
-        var v = materiel.value.replace(/[\s,;]+$/, "");
-        materiel.value = (v ? v + ", " : "") + m;
-        etat.modifie = true; majSugg();
-      } }));
-    });
-    materiel.addEventListener("input", majSugg);
-    majSugg();
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Vos moyens matériels" }),
-      champ("Matériel", materiel), sugg
-    ]));
+    f.appendChild(el("h2", { text: "Matériel" }));
+    f.appendChild(champ("Vos principaux engins et équipements", materiel));
 
-    // Références
     var refs = el("ol", { class: "refs" });
-    var ajoutRef = el("button", { type: "button", class: "btn petit blanc", text: "+ Ajouter une référence" });
+    var ajoutRef = el("button", { type: "button", class: "lien", text: "Ajouter une ligne" });
     function ligneRef(r) {
       r = r || {};
-      var ach = el("input", { type: "text", maxlength: "150", value: r.acheteur || "", placeholder: g.ref[0], "data-k": "acheteur" });
-      var obj = el("input", { type: "text", maxlength: "200", value: r.objet || "", placeholder: g.ref[1], "data-k": "objet" });
-      var an = el("input", { type: "text", inputmode: "numeric", maxlength: "4", value: r.annee ? String(r.annee) : "", placeholder: String(new Date().getFullYear() - 1), "data-k": "annee" });
-      var mt = el("input", { type: "text", maxlength: "40", value: r.montant || "", placeholder: g.ref[2], "data-k": "montant" });
-      var li = el("li", {}, [champ("Acheteur", ach), champ("Objet", obj),
-        el("div", { class: "bas" }, [champ("Année", an), champ("Montant", mt),
-          el("button", { type: "button", class: "lien discret retirer", text: "Retirer", onclick: function () { li.remove(); etat.modifie = true; majAjout(); if (!refs.children.length) refs.appendChild(ligneRef()); } })])]);
+      function inp(k, max, cls, lab, ph) {
+        return el("input", { type: "text", maxlength: String(max), value: r[k] ? String(r[k]) : "", "data-k": k, class: cls, "aria-label": lab, placeholder: ph || "" });
+      }
+      var li = el("li", { class: "ref" }, [
+        inp("acheteur", 150, "r-acheteur", "Acheteur", "Acheteur"),
+        inp("objet", 200, "r-objet", "Objet", "Objet"),
+        inp("annee", 4, "r-annee", "Année", "Année"),
+        inp("montant", 40, "r-montant", "Montant", "Montant")
+      ]);
+      li.querySelector(".r-annee").setAttribute("inputmode", "numeric");
+      li.appendChild(el("button", { type: "button", class: "retirer", "aria-label": "Retirer cette ligne", title: "Retirer", text: "×", onclick: function () {
+        li.remove(); etat.modifie = true; majAjout(); if (!refs.children.length) refs.appendChild(ligneRef());
+      } }));
       return li;
     }
     function majAjout() { ajoutRef.hidden = refs.children.length >= 8; }
-    (p.references && p.references.length ? p.references : [{}]).forEach(function (r) { refs.appendChild(ligneRef(r)); });
+    var lignes = (p.references || []).slice();
+    while (lignes.length < 2) lignes.push({});
+    lignes.forEach(function (r) { refs.appendChild(ligneRef(r)); });
     ajoutRef.addEventListener("click", function () { var li = ligneRef(); refs.appendChild(li); majAjout(); li.querySelector("input").focus(); });
     majAjout();
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Vos références récentes" }),
-      el("p", { class: "aide", text: "Les chantiers ou contrats des 3 dernières années, publics ou privés : ce sont les preuves que les acheteurs regardent. 8 au plus." }),
-      refs, ajoutRef
-    ]));
+    f.appendChild(el("h2", { text: "Références des trois dernières années" }));
+    f.appendChild(el("div", { class: "refs-tete", "aria-hidden": "true" }, [el("span", { text: "Acheteur" }), el("span", { text: "Objet" }), el("span", { text: "Année" }), el("span", { text: "Montant" }), el("span")]));
+    f.appendChild(refs);
+    f.appendChild(ajoutRef);
 
-    // Présentation
     var pres = el("textarea", { maxlength: "1200", placeholder: g.pres });
     pres.value = p.presentation || "";
-    f.appendChild(el("section", { class: "bloc" }, [
-      el("h2", { text: "Ce qui vous distingue" }),
-      champ("En quelques lignes", pres, "Vos points forts, votre organisation, votre démarche environnementale.")
-    ]));
+    f.appendChild(el("h2", { text: "Présentation" }));
+    f.appendChild(champ("Ce qui vous distingue", pres));
 
     var msg = el("p", { class: "msg", role: "alert" });
-    var ok = el("button", { type: "submit", class: "btn", text: "Enregistrer mon profil" });
-    f.appendChild(el("div", { class: "enregistrer" }, [ok,
-      etat.d.profil_maj ? el("span", { class: "quand", text: "Dernière mise à jour le " + dateTxt(String(etat.d.profil_maj).slice(0, 10)) }) : null, msg]));
+    var ok = el("button", { type: "submit", class: "btn", text: "Enregistrer" });
+    f.appendChild(el("div", { class: "fin-form" }, [ok,
+      el("span", { class: "quand", text: etat.d.profil_maj ? "Enregistré le " + dateTxt(String(etat.d.profil_maj).slice(0, 10)) : "" }), msg]));
     f.addEventListener("input", function () { etat.modifie = true; });
     f.addEventListener("change", function () { etat.modifie = true; });
 
@@ -348,7 +311,7 @@
         lesRefs.push(o);
       });
       if (refFautive) { msg.textContent = "Références : écrivez l'année comme 2024."; refFautive.focus(); return; }
-      var quals = Array.prototype.filter.call(puces.children, function (b) { return b.getAttribute("aria-pressed") === "true"; }).map(function (b) { return b.textContent; })
+      var quals = Array.prototype.filter.call(coches.querySelectorAll("input"), function (c) { return c.checked; }).map(function (c) { return c.value; })
         .concat(autresQual.value.split(/[,;\n]+/).map(function (x) { return x.trim(); }).filter(Boolean));
       var expo = exp.querySelector("input:checked");
       var corps = { siret: s, ville: ville.value.trim(), annee_creation: annee.value.trim(), effectif: effectif.value.trim(), ca: ca.value.trim(),
@@ -358,9 +321,8 @@
       if (!r) return;
       etat.d.profil = r; etat.d.profil_maj = new Date().toISOString();
       etat.modifie = false;
-      PG.toast("Profil enregistré. Merci : nos avis en tiendront compte.");
-      var q = f.querySelector(".quand");
-      if (q) q.textContent = "Dernière mise à jour aujourd'hui";
+      PG.toast("Profil enregistré.");
+      f.querySelector(".quand").textContent = "Enregistré aujourd'hui";
     });
     racine.appendChild(f);
   }
@@ -368,93 +330,67 @@
   // ------------------------------------------------------------------ pièces administratives
   function pieces() { return etat.d.pieces || []; }
   function dePieces(type) { return pieces().filter(function (p) { return p.type === type; }); }
-  function alertes() {
-    var vus = {}, res = [];
-    pieces().forEach(function (p) {
-      var cle = p.type + "|" + plat(p.libelle);
-      if (!vus[cle]) vus[cle] = [];
-      vus[cle].push(p);
-    });
-    Object.keys(vus).forEach(function (k) {
-      var l = vus[k];
-      if (l.some(function (p) { return !p.date_fin; })) return;
-      var fin = l.map(function (p) { return p.date_fin; }).sort().pop();
-      if (etatDate(fin) === "expire" || etatDate(fin) === "bientot") res.push(fin);
-    });
-    return res;
-  }
-  // État d'un type : la pièce la plus récente compte.
+  // État d'un type de pièce : la plus récente compte (pour les tests et l'accessibilité).
   function etatType(type) {
     var l = dePieces(type);
-    if (!l.length) return { classe: "", texte: "À ajouter" };
+    if (!l.length) return "manque";
     if (TYPES[type].plusieurs) {
-      var pire = l.map(function (p) { return etatDate(p.date_fin); });
-      if (pire.indexOf("expire") >= 0) return { classe: "expire", texte: "Un document expiré" };
-      if (pire.indexOf("bientot") >= 0) return { classe: "bientot", texte: "Un document à renouveler" };
-      return { classe: "ok", texte: l.length > 1 ? l.length + " documents" : "1 document" };
+      var e = l.map(function (p) { return etatDate(p.date_fin); });
+      return e.indexOf("expire") >= 0 ? "expire" : e.indexOf("bientot") >= 0 ? "bientot" : "ok";
     }
-    if (l.some(function (p) { return !p.date_fin; })) return { classe: "ok", texte: "Déposé" };
-    var fin = l.map(function (p) { return p.date_fin; }).sort().pop();
-    var e = etatDate(fin);
-    return { classe: e, texte: e === "expire" ? "Expiré" : e === "bientot" ? "À renouveler" : "À jour" };
+    if (l.some(function (p) { return !p.date_fin; })) return "ok";
+    var x = etatDate(l.map(function (p) { return p.date_fin; }).sort().pop());
+    return x === "neutre" ? "ok" : x;
   }
 
-  function ligneDoc(p) {
+  // Une ligne par fichier : lien, validité, modifier, supprimer.
+  function ligneFichier(p, titre) {
     var lien = etat.liens[p.chemin];
+    var nom = titre || ((p.type === "qualification" || p.type === "autre") && p.libelle ? p.libelle : p.nom_fichier);
     var e = etatDate(p.date_fin);
-    var nom = (p.type === "qualification" || p.type === "autre") && p.libelle ? p.libelle : p.nom_fichier;
-    return el("li", {}, [
-      el("div", { class: "fichier" }, [
-        lien ? el("a", { href: lien, target: "_blank", rel: "noopener", text: nom }) : el("b", { text: nom }),
-        el("small", { class: e === "expire" ? "expire" : "", text: [texteValidite(p), (nom !== p.nom_fichier ? p.nom_fichier : ""), taille(p.taille)].filter(Boolean).join(" · ") })
-      ]),
-      el("div", { class: "actions" }, [
-        el("button", { type: "button", class: "lien", text: "Modifier", onclick: function () { fenModifier(p); } }),
-        el("button", { type: "button", class: "lien discret", text: "Supprimer", onclick: function (ev) { supprimer(ev.currentTarget, p); } })
-      ])
+    return el("p", { "data-id": p.id }, [
+      lien ? el("a", { href: lien, target: "_blank", rel: "noopener", text: nom }) : el("b", { text: nom }),
+      " · ",
+      el("span", { class: e === "expire" ? "etat-expire" : e === "bientot" ? "etat-bientot" : "", text: texteValidite(p) }),
+      " · ",
+      el("button", { type: "button", class: "lien", text: "modifier", onclick: function () { fenModifier(p); } }),
+      " · ",
+      el("button", { type: "button", class: "lien", text: "supprimer", onclick: function (ev) { supprimer(ev.currentTarget, p); } })
     ]);
   }
 
-  function carteType(type) {
-    var t = TYPES[type], l = dePieces(type), st = etatType(type);
-    var unique = !t.plusieurs;
-    return el("section", { class: "ptype " + st.classe, id: "t-" + type }, [
-      el("div", { class: "tete" }, [el("h3", { text: t.nom }), el("span", { class: "statut-p " + st.classe, text: st.texte })]),
-      t.aide ? el("p", { class: "aide", text: t.aide }) : null,
-      l.length ? el("ul", { class: "docs" }, l.map(ligneDoc)) : null,
-      el("button", { type: "button", class: "btn petit" + (l.length ? " blanc" : ""), text: unique && l.length ? "Remplacer par un nouveau" : l.length ? "+ Ajouter un autre" : "+ Ajouter",
-        onclick: function () { fenPiece(type); } })
+  function lignePiece(type) {
+    var t = TYPES[type], l = dePieces(type);
+    var bouton = l.length && !t.plusieurs ? "Remplacer" : l.length ? "Ajouter" : "Ajouter";
+    return el("li", { id: "t-" + type, "data-etat": etatType(type) }, [
+      el("span", { class: "nom", text: t.nom }),
+      el("button", { type: "button", class: "lien", text: bouton, "aria-label": bouton + " : " + t.nom, onclick: function () { fenPiece(type); } }),
+      el("div", { class: "fichiers" }, l.length ? l.map(function (p) { return ligneFichier(p); }) : [el("p", { text: "Pas encore déposé" })])
     ]);
   }
 
   function rendrePieces(racine) {
     if (gratuit()) {
       racine.appendChild(el("div", { class: "panneau-verrou" }, [
-        el("h3", { class: "verrou", text: "Vos pièces administratives, toujours prêtes" }),
-        el("p", { text: "Kbis, attestations URSSAF et fiscale, assurances, qualifications : déposez-les une fois, nous vous prévenons avant qu'elles expirent, et nous les avons sous la main pour vos dossiers." }),
-        el("p", { text: "Cet outil s'active avec votre premier mémoire confié à Pli Gagnant : cliquez sur « Confier le mémoire à Pli Gagnant » sous une opportunité, ou transférez-nous un dossier à " + PG.CONTACT + "." }),
+        el("h3", { class: "verrou", text: "Pièces administratives" }),
+        el("p", { text: "Kbis, attestations URSSAF et fiscale, assurances, qualifications : vous les déposez une fois et nous vous prévenons avant qu'elles expirent." }),
+        el("p", { text: "Disponible dès votre premier mémoire confié à Pli Gagnant." }),
         el("div", { class: "v-actions" }, [el("a", { class: "btn petit", href: "/espace/tableau-de-bord/#opportunites", text: "Voir mes opportunités" })])
       ]));
       return;
     }
-    racine.appendChild(el("p", { class: "ent-intro" }, [el("b", { text: "Facultatif. " }),
-      "Gardez ici les pièces que les acheteurs demandent à chaque candidature. Nous vous prévenons dans votre tableau de bord un mois avant qu'elles expirent."]));
+    racine.appendChild(el("p", { class: "ent-intro", text: "Facultatif. Rangez ici les pièces demandées à chaque candidature : nous vous prévenons un mois avant qu'elles expirent." }));
     var box = el("div", { class: "pieces" });
-    box.appendChild(el("h2", { text: "Les pièces demandées à chaque candidature" }));
-    usuelles().forEach(function (t) { box.appendChild(carteType(t)); });
+    box.appendChild(el("h2", { text: "Pièces de candidature" }));
+    box.appendChild(el("ul", { class: "liste-pieces" }, usuelles().map(lignePiece)));
     box.appendChild(el("h2", { text: "Autres documents" }));
     var autres = pieces().filter(function (p) { return usuelles().indexOf(p.type) < 0; });
-    box.appendChild(el("section", { class: "ptype", id: "t-autres" }, [
-      el("p", { class: "aide", text: autres.length ? "RIB, bilans, attestations de bonne exécution, et tout autre document utile." : "RIB, bilans, attestations de bonne exécution, et tout autre document utile : rien pour l'instant." }),
-      autres.length ? el("ul", { class: "docs" }, autres.map(function (p) {
-        var li = ligneDoc(p);
-        var a = li.querySelector(".fichier a, .fichier b");
-        if (a && p.type !== "autre") a.textContent = TYPES[p.type].nom + (TYPES[p.type].plusieurs ? " · " + p.nom_fichier : "");
-        return li;
-      })) : null,
-      el("button", { type: "button", class: "btn petit blanc", text: "+ Ajouter un document", onclick: function () { fenPiece(null); } })
-    ]));
-    box.appendChild(el("p", { class: "pied-pieces", text: "PDF ou photo, 10 Mo au plus par fichier. Vos documents restent privés : seules les personnes qui ont accès à votre espace, et Pli Gagnant pour préparer vos dossiers, peuvent les ouvrir." }));
+    box.appendChild(el("ul", { class: "liste-pieces", id: "t-autres" }, autres.length ? autres.map(function (p) {
+      var titre = p.type === "autre" ? null : TYPES[p.type].nom;
+      return el("li", { "data-etat": etatDate(p.date_fin) }, [el("div", { class: "fichiers" }, [ligneFichier(p, titre)])]);
+    }) : [el("li", {}, [el("div", { class: "fichiers" }, [el("p", { text: "RIB, bilans, attestations de bonne exécution… Aucun pour l'instant." })])])]));
+    box.appendChild(el("button", { type: "button", class: "btn petit blanc ajout", text: "Ajouter un document", onclick: function () { fenPiece(null); } }));
+    box.appendChild(el("p", { class: "pied-pieces", text: "PDF ou photo, 10 Mo maximum. Vos documents ne sont visibles que par votre entreprise et par Pli Gagnant." }));
     racine.appendChild(box);
   }
 
@@ -490,10 +426,10 @@
     if (t.mode === "emission") {
       bloc = champ(t.date, doc);
       bloc.appendChild(info);
-      var maj = function () { info.textContent = doc.value ? "Nous vous rappellerons de le renouveler avant le " + dateTxt(plusMois(doc.value, t.duree)) + "." : "Valable " + t.duree + " mois à partir de cette date."; };
+      var maj = function () { info.textContent = doc.value ? "À renouveler avant le " + dateTxt(plusMois(doc.value, t.duree)) + "." : "Valable " + t.duree + " mois."; };
       doc.addEventListener("input", maj); maj();
     } else if (t.mode === "fin") {
-      bloc = champ("Valable jusqu'au", fin, "Facultatif, mais utile : nous vous prévenons un mois avant.");
+      bloc = champ("Valable jusqu'au (facultatif)", fin, "Nous vous prévenons un mois avant.");
     } else bloc = null;
     return { bloc: bloc, doc: doc, fin: fin, mode: t.mode };
   }
@@ -504,7 +440,7 @@
     if (!type) {
       selType = el("select", {}, [el("option", { value: "", text: "Choisissez…" })].concat(autresTypes().map(function (k) { return el("option", { value: k, text: TYPES[k].nom }); })));
     }
-    var zoneType = selType ? champ("Type de document", selType) : el("p", { class: "rappel", text: TYPES[type].aide || "" });
+    var zoneType = selType ? champ("Type de document", selType) : (TYPES[type].aide ? el("p", { class: "fichier-choisi", text: TYPES[type].aide }) : null);
     var libelle = el("input", { type: "text", maxlength: "120", placeholder: "ex. Qualipaysage, Qualibat 6111…" });
     var champLib = champ("Nom", libelle);
     var fichier = el("input", { type: "file", accept: "application/pdf,image/*" });
@@ -517,7 +453,7 @@
     var zoneDates = el("div");
     var dates = null;
     var remplacer = el("input", { type: "checkbox", checked: true });
-    var champRemplacer = el("label", { class: "case" }, [remplacer, el("span", {}, [el("b", { text: "Supprimer l'ancien document" }), el("small", { text: "Le nouveau le remplace." })])]);
+    var champRemplacer = el("label", { class: "case" }, [remplacer, el("span", { text: "Supprimer l'ancien document" })]);
     function majType() {
       var t = TYPES[type];
       champLib.hidden = !t || !t.libelle;
