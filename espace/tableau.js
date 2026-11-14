@@ -152,7 +152,7 @@
       el("h1", { text: e.nom }),
       e.veille_active && e.metier ? el("p", { class: "sous" }, ["Veille " + e.metier + (e.zone ? " dans " + e.zone : "") + " ",
         el("button", { type: "button", class: "lien regler", text: "Régler ma veille", onclick: fenVeille })]) : null,
-      e.veille_active && (e.veille_maj || enCours) ? el("p", { class: "maj", text: [e.veille_maj ? "Mise à jour chaque jour ouvré, la dernière le " + dateMoyenne(e.veille_maj) : "", enCours]
+      e.veille_active && (e.veille_maj || enCours) ? el("p", { class: "maj", text: [e.veille_maj ? "Mise à jour chaque jour ouvré (dernière le " + dateMoyenne(e.veille_maj) + ")" : "", enCours]
         .filter(Boolean).join(" · ") }) : null,
       !e.veille_active ? el("p", { class: "sous" }, [el("button", { type: "button", class: "btn petit blanc", text: "Recevoir la veille gratuite des appels d'offres", onclick: fenVeille })]) : null
     ]));
@@ -246,10 +246,6 @@
   function rendreOnglets(g) {
     var o = $("onglets");
     o.textContent = "";
-    var signal = {
-      opportunites: g.opportunites.some(estNouveau),
-      preparation: g.preparation.some(function (c) { var n = joursAvant(c); return n !== null && n <= 3; })
-    };
     ONGLETS.forEach(function (t) {
       var n = t.id === "opportunites" ? g.opportunites.length : g[t.id].length;
       var ferme = verrouille(t.id), choisi = etat.onglet === t.id;
@@ -258,11 +254,16 @@
         "aria-selected": choisi ? "true" : "false", tabindex: choisi ? "0" : "-1",
         onclick: function () { choisirOnglet(t.id); } }, [
         el("span", { class: "l" }, [el("span", { class: "long", text: t.nom }), el("span", { class: "court", text: COURTS[t.id] })]),
-        ferme ? el("span", { class: "sr", text: " (à activer)" }) : el("span", { class: "c", text: String(n) }),
-        signal[t.id] && !ferme ? el("span", { class: "point" }, [el("span", { class: "sr", text: t.id === "opportunites" ? " (nouveautés)" : " (date limite proche)" })]) : null
+        ferme ? el("span", { class: "sr", text: " (à activer)" }) : el("span", { class: "c", text: String(n) })
       ]));
     });
     $("panneau").setAttribute("aria-labelledby", "o-" + etat.onglet);
+    // Sur téléphone, la barre défile : l'onglet choisi reste visible.
+    var sel = $("o-" + etat.onglet);
+    if (sel && o.scrollWidth > o.clientWidth) {
+      if (sel.offsetLeft + sel.offsetWidth > o.scrollLeft + o.clientWidth) o.scrollLeft = sel.offsetLeft + sel.offsetWidth - o.clientWidth + 4;
+      else if (sel.offsetLeft < o.scrollLeft) o.scrollLeft = Math.max(0, sel.offsetLeft - 4);
+    }
   }
   $("onglets").addEventListener("keydown", function (ev) {
     if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
@@ -427,8 +428,6 @@
     if (estNouveau(c) && c.statut === "opportunite") top.appendChild(el("span", { class: "neuf", text: "Nouveau" }));
     if (c.source === "client") top.appendChild(el("span", { class: "etiq", text: "Ajouté par vous" }));
     if (c.memoire && c.statut !== "en_preparation") top.appendChild(el("span", { class: "etiq bleu", text: "Mémoire Pli Gagnant" }));
-    var delai = pastilleDelai(c);
-    if (delai) top.appendChild(delai);
     if (top.childNodes.length) art.appendChild(top);
 
     art.appendChild(el("h3", { id: "t-" + c.id, text: c.acheteur }));
@@ -447,7 +446,7 @@
         el("span", { text: "La date limite est passée. Avez-vous déposé votre offre ?" }),
         el("div", { class: "v-actions" }, [
           el("button", { type: "button", class: "btn petit", text: "Oui, j'ai déposé", onclick: function () { fenDepot(c); } }),
-          el("button", { type: "button", class: "btn petit", text: "Non", onclick: function (ev) { changerStatut(c, "abandonne", { annulable: true }, ev.currentTarget); } })
+          el("button", { type: "button", class: "btn petit blanc", text: "Non", onclick: function (ev) { changerStatut(c, "abandonne", { annulable: true }, ev.currentTarget); } })
         ])
       ]));
     }
@@ -458,27 +457,19 @@
     return art;
   }
 
-  // Compte à rebours visible d'un coup d'œil, pour ce qui est encore ouvert.
-  function pastilleDelai(c) {
-    if (["opportunite", "en_preparation"].indexOf(c.statut) < 0) return null;
-    var n = joursAvant(c);
-    if (n === null) return null;
-    if (n < 0) return null;
-    return el("span", { class: "delai" + (n <= 5 ? " urgent" : n <= 10 ? " bientot" : ""),
-      text: n === 0 ? "Aujourd'hui" : n === 1 ? "Demain" : "Dans " + n + " jours" });
-  }
-
   function metaDe(c) {
     var ul = el("ul", { class: "v-meta" });
     function m(lbl, val, cls) { if (val) ul.appendChild(el("li", { class: cls || null }, [lbl ? el("span", { class: "lbl", text: lbl + " " }) : null, val])); }
     var actif = ["opportunite", "en_preparation"].indexOf(c.statut) >= 0;
     if (c.date_limite && (actif || ["abandonne", "ecartee"].indexOf(c.statut) >= 0)) {
-      m("Date limite", dateMoyenne(c.date_limite) + (c.heure_limite ? " à " + c.heure_limite : ""));
+      var n = joursAvant(c);
+      m("Date limite", dateMoyenne(c.date_limite) + (c.heure_limite ? " à " + c.heure_limite : "") +
+        (actif && n !== null && n >= 0 ? ", " + PG.dansCombien(n) : ""), actif && n !== null && n >= 0 && n <= 5 ? "urgent" : null);
     }
     if (c.date_depot && ["depose", "gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0) m("Déposé le", dateMoyenne(c.date_depot));
     if (c.date_resultat && ["gagne", "perdu", "sans_suite"].indexOf(c.statut) >= 0) m("Résultat le", dateMoyenne(c.date_resultat));
     m(null, c.lieu, "lieu");
-    if (c.valeur_technique !== null && c.valeur_technique !== undefined) m("Valeur technique", c.valeur_technique + " % de la note");
+    if (c.valeur_technique !== null && c.valeur_technique !== undefined) m("Valeur technique", c.valeur_technique + " %");
     m("Montant estimé", c.montant);
     if (c.montant_attribue && c.statut === "gagne") m("Marché", c.montant_attribue);
     return ul.childNodes.length ? ul : null;
