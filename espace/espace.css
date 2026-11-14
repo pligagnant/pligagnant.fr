@@ -137,7 +137,17 @@
 .v-card.eclair { animation: eclair 1.8s ease-out; }
 @keyframes eclair { 0%, 45% { background: #FFF6C7; } 100% { background: rgba(255, 246, 199, 0); } }
 @media (prefers-reduced-motion: reduce) { .v-card.eclair { animation: none; background: #FFF6C7; } }
-.esp-corps .v-passes { border-top: 0; margin-top: 26px; }
+/* Sous-parties de la liste (« À tenter », « À regarder de près », « Gagnés »…) */
+.partie { max-width: 860px; margin-bottom: 28px; }
+.partie > h2 { font-size: 1.05rem; margin-bottom: 4px; }
+.partie > h2 .n, .v-passes summary .n { font-weight: 500; color: var(--muted); }
+/* « Détails » : ce qui n'est pas indispensable, ouvert à la demande */
+.v-plus { font-size: 0.95rem; }
+.v-plus > summary { cursor: pointer; color: var(--muted); font-weight: 600; padding: 4px 0; width: max-content; }
+.v-plus > summary:hover { color: var(--ink); }
+.v-plus[open] > summary { margin-bottom: 6px; }
+.v-plus > :not(summary) + :not(summary) { margin-top: 6px; }
+.esp-corps .v-passes { border-top: 0; margin-top: 8px; max-width: 860px; }
 .esp-corps .v-passes summary { font-weight: 600; color: var(--muted); }
 .esp-corps .v-passes .v-card { padding: 16px 0; }
 .ajout-bas { display: none; }
