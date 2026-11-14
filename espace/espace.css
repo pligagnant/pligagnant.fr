@@ -349,3 +349,11 @@ dialog.fen.large { width: min(640px, calc(100vw - 24px)); }
   .ref .r-montant { grid-row: 3; grid-column: 1; } .ref .r-annee { grid-row: 3; grid-column: 2; }
   .ref .retirer { grid-row: 1; grid-column: 3; }
 }
+
+/* Questionnaire mémoire */
+.q-titre { font-size: 1.3rem; margin: 26px 0 10px; }
+.q-titre:first-of-type { margin-top: 0; }
+.bloc h3 { font-size: 1rem; color: var(--muted); margin-top: 6px; }
+.q-metier { display: flex; flex-direction: column; gap: 16px; }
+.q-bas { display: flex; }
+.q-marche { border-color: var(--blue); }
