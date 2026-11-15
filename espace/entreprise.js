@@ -1,4 +1,4 @@
-/* Page « Mon entreprise » de l'espace client : profil (facultatif, adapté au métier) et pièces administratives. */
+/* Page « Mon entreprise » de l'espace client : profil (facultatif, adapté au métier), questionnaires et pièces administratives. */
 (function () {
   "use strict";
   var PG = window.PG, sb = PG.client, el = PG.el;
@@ -184,7 +184,7 @@
     $("panneau").setAttribute("aria-labelledby", "o-" + etat.onglet);
     var p = $("panneau"); p.textContent = "";
     if (etat.onglet === "profil") rendreProfil(p);
-    else if (etat.onglet === "questionnaire") window.PG_QUESTIONNAIRE.rendre(p, { etat: etat, appeler: appeler, cleMetier: cleMetier });
+    else if (etat.onglet === "questionnaire") window.PG_QUESTIONNAIRE.rendreListe(p, etat.d);
     else rendrePieces(p);
     $("corps").hidden = false;
   }
@@ -325,6 +325,7 @@
       etat.d.profil = r; etat.d.profil_maj = new Date().toISOString();
       etat.modifie = false;
       PG.toast("Profil enregistré.");
+      if (window.PG_AFAIRE) window.PG_AFAIRE.rafraichir();
       f.querySelector(".quand").textContent = "Enregistré aujourd'hui";
     });
     racine.appendChild(f);
@@ -540,6 +541,7 @@
   async function recharger() {
     var y = window.scrollY;
     if (await charger()) { rendre(); window.scrollTo(0, y); }
+    if (window.PG_AFAIRE) window.PG_AFAIRE.rafraichir();
   }
 
   function identifiant() {
@@ -570,6 +572,7 @@
       }
     });
     window.addEventListener("beforeunload", function (ev) { if (etat.modifie) { ev.preventDefault(); ev.returnValue = ""; } });
+    if (window.PG_AFAIRE) window.PG_AFAIRE.rafraichir();
     if (!(await charger())) return;
     var h = location.hash.slice(1);
     etat.onglet = ONGLETS.indexOf(h) >= 0 ? h : "profil";

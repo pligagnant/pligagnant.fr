@@ -9,7 +9,6 @@
     { id: "deposes", nom: "Déposés" },
     { id: "historique", nom: "Historique" }
   ];
-  var AVIS = { tenter: "À tenter", regarder: "À regarder de près", passer: "À laisser passer" };
   var STATUTS = { opportunite: "À étudier", ecartee: "Écarté", en_preparation: "En préparation", abandonne: "Abandonné",
                   depose: "Déposé", gagne: "Gagné", perdu: "Perdu", sans_suite: "Sans suite" };
   var ETAPES = [["demande", "Demande reçue"], ["dossier_recu", "Dossier reçu"], ["en_redaction", "Rédaction"], ["livre", "Mémoire livré"]];
@@ -26,7 +25,6 @@
   function jour() { return (etat.d && etat.d.aujourdhui) || PG.aujourdhuiIso(); }
   function liste() { return (etat.d && etat.d.consultations) || []; }
   function passee(c) { return c.date_limite && PG.ecart(c.date_limite, jour()) < 0; }
-  function rangAvis(c) { return c.avis === "tenter" ? 0 : c.avis === "regarder" ? 1 : c.avis === "passer" ? 3 : 2; }
   function parDate(a, b) {
     var x = a.date_limite || "9999", y = b.date_limite || "9999";
     return x < y ? -1 : x > y ? 1 : 0;
@@ -35,8 +33,8 @@
     var L = liste();
     var opp = L.filter(function (c) { return c.statut === "opportunite" && !passee(c); });
     return {
-      opportunites: opp.filter(function (c) { return c.avis !== "passer"; }).sort(function (a, b) { return rangAvis(a) - rangAvis(b) || parDate(a, b); }),
-      deconseillees: opp.filter(function (c) { return c.avis === "passer"; }).sort(parDate),
+      // Seules les annonces qui peuvent convenir : celles que nous déconseillons ne sont pas montrées.
+      opportunites: opp.filter(function (c) { return c.avis !== "passer"; }).sort(parDate),
       preparation: L.filter(function (c) { return c.statut === "en_preparation"; }).sort(parDate),
       deposes: L.filter(function (c) { return c.statut === "depose"; }).sort(function (a, b) { return (b.date_depot || "") < (a.date_depot || "") ? -1 : 1; }),
       historique: L.filter(function (c) { return ["gagne", "perdu", "sans_suite", "abandonne", "ecartee"].indexOf(c.statut) >= 0; })
@@ -116,12 +114,7 @@
     var d = etat.d, g = groupes();
     $("qui").textContent = d.entreprise.nom;
     $("qui").title = d.moi.email;
-    var lEnt = $("l-entreprise");
-    if (lEnt) {
-      var nPa = (d.pieces_alertes || []).length;
-      lEnt.classList.toggle("alerte", nPa > 0);
-      lEnt.title = nPa ? pluriel(nPa, "pièce administrative à renouveler", "pièces administratives à renouveler") : "";
-    }
+    if (window.PG_AFAIRE) window.PG_AFAIRE.badge(d);
     rendreHello(d, g);
     rendreOnglets(g);
     rendreGuide();
@@ -141,7 +134,7 @@
   function pluriel(n, un, plusieurs) { return n + " " + (n > 1 ? plusieurs : un); }
   function joursAvant(c) { return c.date_limite ? PG.ecart(c.date_limite, jour()) : null; }
 
-  // En-tête : entreprise, veille, et ce qui attend une action du client.
+  // En-tête : entreprise et veille.
   function rendreHello(d, g) {
     var e = d.entreprise, h = $("hello");
     h.textContent = "";
@@ -156,62 +149,6 @@
       h.appendChild(el("p", { class: "bandeau" }, [el("b", { class: "verrou", text: "Compte gratuit" }), " · ",
         el("button", { type: "button", class: "lien", text: "ce qui s'active avec votre premier mémoire", onclick: fenVerrou })]));
     }
-    var items = aFaire(g);
-    if (!items.length) return;
-    var ul = el("ul");
-    items.slice(0, 3).forEach(function (it) {
-      ul.appendChild(el("li", {}, [el("button", { type: "button", class: "af" + (it.urgent ? " af-urgent" : ""), onclick: it.action }, [
-        el("span", { class: "af-txt" }, it.texte), el("span", { class: "af-go" }, [el("span", { class: "mot", text: it.bouton })])
-      ])]));
-    });
-    h.appendChild(el("section", { class: "afaire", "aria-labelledby": "af-titre" }, [el("h2", { id: "af-titre", text: "À faire" }), ul]));
-  }
-
-  function aFaire(g) {
-    var L = [];
-    function b(t) { return el("b", { text: t }); }
-    function voir(c, onglet) { return function () { allerA(onglet, c.id); }; }
-    g.preparation.filter(passee).forEach(function (c) {
-      L.push({ p: 0, urgent: true, bouton: "Répondre", action: voir(c, "preparation"),
-        texte: [b(c.acheteur), " – offre déposée ?"] });
-    });
-    g.preparation.filter(function (c) { return !passee(c) && c.memoire === "livre"; }).forEach(function (c) {
-      L.push({ p: 1, bouton: "Voir", action: voir(c, "preparation"),
-        texte: [b(c.acheteur), " – mémoire livré"] });
-    });
-    g.preparation.filter(function (c) { var n = joursAvant(c); return n !== null && n >= 0 && n <= 5 && c.memoire !== "livre"; }).forEach(function (c) {
-      L.push({ p: 2, urgent: joursAvant(c) <= 2, bouton: "Voir", action: voir(c, "preparation"),
-        texte: [b(c.acheteur), " – à déposer " + PG.dansCombien(joursAvant(c))] });
-    });
-    var pa = (etat.d && etat.d.pieces_alertes) || [];
-    if (pa.length) {
-      var p0 = pa[0];
-      L.push({ p: 4.5, urgent: !!p0.expiree, bouton: "Mettre à jour", action: function () { location.href = "/espace/entreprise/#pieces"; },
-        texte: pa.length > 1 ? [b(pluriel(pa.length, "pièce", "pièces")), " à renouveler"] : [b(p0.nom), p0.expiree ? " – expirée" : " – à renouveler"] });
-    }
-    var nouv = g.opportunites.filter(estNouveau).length;
-    if (nouv) {
-      var premiere = g.opportunites.filter(estNouveau).sort(parDate)[0];
-      L.push({ p: 3, bouton: "Voir", texte: [b(pluriel(nouv, "nouvelle opportunité", "nouvelles opportunités"))],
-        action: function () { allerA("opportunites", premiere.id); } });
-    }
-    var proche = g.opportunites.filter(function (c) { var n = joursAvant(c); return c.avis === "tenter" && n !== null && n <= 7; }).sort(parDate)[0];
-    if (proche) {
-      L.push({ p: 4, bouton: "Voir", action: voir(proche, "opportunites"),
-        texte: [b(proche.acheteur), " – à tenter, " + PG.dansCombien(joursAvant(proche))] });
-    }
-    var attente = g.deposes.filter(function (c) { return c.date_depot && PG.ecart(jour(), c.date_depot) >= 30; })
-      .sort(function (a, b) { return a.date_depot < b.date_depot ? -1 : 1; })[0];
-    if (attente) {
-      L.push({ p: 5, bouton: "Indiquer", action: function () { fenResultat(attente); },
-        texte: [b(attente.acheteur), " – résultat reçu ?"] });
-    }
-    var e = etat.d && etat.d.entreprise;
-    if (e && e.veille_active && e.profil_rempli === false) {
-      L.push({ p: 7, bouton: "Compléter", action: function () { location.href = "/espace/entreprise/#profil"; },
-        texte: [b("Profil de l'entreprise"), " – à compléter"] });
-    }
-    return L.sort(function (a, b) { return a.p - b.p; });
   }
 
   // Ouvre un onglet et, si demandé, amène la fiche à l'écran.
@@ -288,7 +225,7 @@
       ]),
       gratuit() ? el("ol", {}, [
         el("li", {}, [el("b", { text: "Opportunités" }), " : les appels d'offres de votre métier, avec notre avis."]),
-        el("li", {}, [el("b", { text: "Confier le mémoire" }), " : nous le rédigeons pour vous."]),
+        el("li", {}, [el("b", { text: "Répondre" }), " : nous rédigeons votre mémoire."]),
         el("li", {}, [el("b", { text: "Le reste" }), " s'active avec votre premier mémoire."])
       ]) : el("ol", {}, [
         el("li", {}, [el("b", { text: "Opportunités" }), " : les appels d'offres repérés pour vous, avec notre avis."]),
@@ -311,21 +248,10 @@
     if (verrouille(o)) { p.appendChild(panneauVerrou(o)); return; }
     if (o === "opportunites") {
       if (!g.opportunites.length) p.appendChild(videOpportunites());
-      [["tenter", "À tenter"], ["regarder", "À regarder de près"]].forEach(function (a) {
-        var cs = g.opportunites.filter(function (c) { return c.avis === a[0]; }).sort(parDate);
-        if (cs.length) p.appendChild(sousPartie(a[1], cs));
-      });
-      var autres = g.opportunites.filter(function (c) { return c.avis !== "tenter" && c.avis !== "regarder"; }).sort(parDate);
-      if (autres.length) p.appendChild(sousPartie("Autres", autres));
-      if (g.deconseillees.length) {
-        p.appendChild(el("details", { class: "v-passes" }, [
-          el("summary", {}, ["Déconseillées ", el("span", { class: "n", text: String(g.deconseillees.length) })]),
-          listeCartes(g.deconseillees)
-        ]));
-      }
+      else p.appendChild(listeAnnonces(g.opportunites));
     } else if (o === "preparation") {
       p.appendChild(g.preparation.length ? listeCartes(g.preparation)
-        : vide("Rien en préparation", "Cliquez sur « Je vais y répondre » sous une opportunité."));
+        : vide("Rien en préparation", "Ouvrez une opportunité et cliquez sur « Répondre »."));
     } else if (o === "deposes") {
       p.appendChild(g.deposes.length ? listeCartes(g.deposes)
         : vide("Aucune offre en attente de résultat", "Cliquez sur « J'ai déposé mon offre » quand c'est fait."));
@@ -363,6 +289,25 @@
       el("div", { class: "v-actions" }, [el("button", { type: "button", class: "btn petit", text: "Activer ma veille gratuite", onclick: fenVeille })]));
   }
 
+  // Une annonce : une ligne cliquable qui ouvre sa page (toutes les informations et « Répondre »).
+  function listeAnnonces(cs) {
+    var ul = el("ul", { class: "annonces" });
+    cs.forEach(function (c) {
+      var n = joursAvant(c);
+      var quand = c.date_limite ? "Date limite " + dateMoyenne(c.date_limite) + (n !== null && n >= 0 ? ", " + PG.dansCombien(n) : "") : "";
+      ul.appendChild(el("li", {}, [el("a", { class: "annonce", href: "/espace/annonce/?id=" + encodeURIComponent(c.id), id: "carte-" + c.id }, [
+        el("span", { class: "an-txt" }, [
+          el("span", { class: "an-tete" }, [estNouveau(c) ? el("span", { class: "neuf", text: "Nouveau" }) : null, el("b", { text: c.acheteur })]),
+          el("span", { class: "an-objet", text: c.objet }),
+          el("span", { class: "an-meta" }, [c.lieu ? el("span", { text: c.lieu }) : null,
+            quand ? el("span", { class: n !== null && n >= 0 && n <= 5 ? "urgent" : null, text: quand }) : null])
+        ]),
+        el("span", { class: "an-go", "aria-hidden": "true", text: "›" })
+      ])]));
+    });
+    return ul;
+  }
+
   function listeCartes(cs) {
     var ul = el("ul", { class: "v-list" });
     cs.forEach(function (c) { ul.appendChild(el("li", {}, carte(c))); });
@@ -378,7 +323,6 @@
   function carte(c) {
     var art = el("article", { class: "v-card " + classeCarte(c), id: "carte-" + c.id, tabindex: "-1", "aria-labelledby": "t-" + c.id });
     var top = el("div", { class: "v-top" });
-    if (c.statut === "opportunite" && c.avis === "passer") top.appendChild(el("span", { class: "v-badge", text: AVIS[c.avis] }));
     if (estNouveau(c) && c.statut === "opportunite") top.appendChild(el("span", { class: "neuf", text: "Nouveau" }));
     if (c.source === "client") top.appendChild(el("span", { class: "etiq", text: "Ajouté par vous" }));
     if (c.memoire && c.statut !== "en_preparation") top.appendChild(el("span", { class: "etiq bleu", text: "Mémoire Pli Gagnant" }));
@@ -389,6 +333,12 @@
     var meta = metaDe(c, true);
     if (meta) art.appendChild(meta);
     if (c.memoire) art.appendChild(suiviMemoire(c));
+    var mq = c.memoire && ((etat.d && etat.d.marches) || []).filter(function (m) { return m.id === c.id; })[0];
+    if (mq) {
+      var qEnv = !!(mq.questions && mq.questions.envoye);
+      art.appendChild(el("p", { class: "v-questionnaire" }, [qEnv ? "Questionnaire envoyé · " : "Questionnaire pour ce mémoire : ",
+        el("a", { href: "/espace/questionnaire/?m=" + encodeURIComponent(c.id), text: qEnv ? "Revoir" : "Y répondre" })]));
+    }
 
     if (c.statut === "en_preparation" && passee(c)) {
       art.appendChild(el("div", { class: "alerte" }, [
@@ -557,7 +507,9 @@
       if (!r) return false;
       var etaitGratuit = gratuit();
       if (etaitGratuit) etat.d.entreprise.formule = "client";
-      remplacer(r); allerA("preparation", r.id);
+      remplacer(r);
+      await charger(false);
+      allerA("preparation", r.id);
       PG.toast(etaitGratuit ? "Demande envoyée, et votre suivi est activé. Nous vous écrivons sous 24 h ouvrées."
                             : "Demande envoyée. Nous vous écrivons sous 24 h ouvrées.", { duree: 6000 });
       return true;
@@ -783,6 +735,8 @@
       if (!fait) { msg.textContent = "Rien à enregistrer : remplissez un nouveau mot de passe ou l'email d'un collaborateur."; return false; }
       return true;
     }, "Enregistrer");
+    var boutons = dlg.querySelector(".boutons");
+    if (boutons) boutons.after(el("p", { class: "fen-quitter" }, [el("button", { type: "button", class: "lien discret", text: "Se déconnecter", onclick: PG.deconnecter })]));
     PG.brancherAffichage(dlg);
   }
 
@@ -798,7 +752,7 @@
   }
   function commentActiver() {
     var offre = (etat.d && etat.d.offre) || {};
-    return "Pour les activer, cliquez sur « Confier le mémoire à Pli Gagnant » sous une opportunité, ou transférez-nous un dossier à " +
+    return "Pour les activer, ouvrez une opportunité et cliquez sur « Répondre », ou transférez-nous un dossier à " +
       PG.CONTACT + ". Votre premier mémoire n'est payé que s'il vous convient" +
       (offre.offre_prix_memoire ? " (" + offre.offre_prix_memoire + " ensuite)." : ".");
   }
@@ -863,7 +817,7 @@
     if (!s.data || !s.data.session) { location.replace("/espace/"); return; }
     sb.auth.onAuthStateChange(function (ev) { if (ev === "SIGNED_OUT") location.replace("/espace/?deconnecte=1"); });
     $("b-deconnexion").addEventListener("click", async function () { await sb.auth.signOut(); location.replace("/espace/?deconnecte=1"); });
-    $("b-compte").addEventListener("click", function () { if (etat.d) fenCompte(); });
+    $("b-compte").addEventListener("click", function (ev) { ev.preventDefault(); if (etat.d) fenCompte(); });
     $("b-ajouter").addEventListener("click", ajouter);
 
     var dejaVu = PG.lireSession("pg-visite-prec");
@@ -875,11 +829,23 @@
     var memo = PG.lireStock("pg-onglet", "opportunites");
     etat.onglet = ONGLETS.some(function (t) { return t.id === h; }) ? h : ONGLETS.some(function (t) { return t.id === memo; }) ? memo : "opportunites";
     rendre();
+    // Lien venu d'une autre page : ?fiche=<id> (amener la fiche à l'écran), #compte (ouvrir Mon compte).
+    var fiche = new URLSearchParams(location.search).get("fiche");
+    var c = fiche && liste().filter(function (x) { return x.id === fiche; })[0];
+    if (c) {
+      history.replaceState(null, "", location.pathname);
+      var vers = { opportunite: "opportunites", en_preparation: "preparation", depose: "deposes" }[c.statut] || "historique";
+      if (verrouille(vers)) vers = "opportunites";
+      if (vers === "opportunites" && c.statut === "opportunite") location.replace("/espace/annonce/?id=" + encodeURIComponent(c.id));
+      else allerA(vers, c.id);
+    }
+    if (h === "compte") { history.replaceState(null, "", location.pathname + "#" + etat.onglet); fenCompte(); }
     if (new URLSearchParams(location.search).get("bienvenue")) PG.toast("Votre mot de passe est enregistré. Bienvenue !");
 
     window.addEventListener("hashchange", function () {
       var x = location.hash.slice(1);
       if (ONGLETS.some(function (t) { return t.id === x; }) && x !== etat.onglet) { etat.onglet = x; rendre(); }
+      if (x === "compte" && etat.d && !document.querySelector("dialog[open]")) { history.replaceState(null, "", location.pathname + "#" + etat.onglet); fenCompte(); }
     });
     // Retour sur l'onglet après un moment : on recharge pour voir les nouveautés.
     document.addEventListener("visibilitychange", async function () {

@@ -125,6 +125,63 @@
     else { bouton.textContent = bouton.dataset.texte || bouton.textContent; bouton.disabled = false; }
   }
 
+  // Appel d'une fonction de la base : renvoie la réponse, ou null après avoir affiché l'erreur.
+  async function appeler(fn, params, bouton, silencieux) {
+    occupe(bouton, true);
+    try {
+      var r = await client.rpc(fn, params || {});
+      if (r.error) {
+        if (sessionExpiree(r.error)) { location.replace("/espace/?expire=1"); return null; }
+        if (!silencieux) toast(messageErreur(r.error), { erreur: true });
+        return null;
+      }
+      return r.data === null || r.data === undefined ? true : r.data;
+    } catch (e) {
+      if (!silencieux) toast(messageErreur(e), { erreur: true });
+      return null;
+    } finally { occupe(bouton, false); }
+  }
+
+  // Pages réservées aux comptes connectés : session, bouton « Se déconnecter ».
+  async function exigerSession() {
+    var s = await client.auth.getSession();
+    if (!s.data || !s.data.session) { location.replace("/espace/"); return false; }
+    client.auth.onAuthStateChange(function (ev) { if (ev === "SIGNED_OUT") location.replace("/espace/?deconnecte=1"); });
+    var b = document.getElementById("b-deconnexion");
+    if (b) b.addEventListener("click", deconnecter);
+    return true;
+  }
+  async function deconnecter() { await client.auth.signOut(); location.replace("/espace/?deconnecte=1"); }
+
+  // Fenêtre de dialogue avec un formulaire ; valider(f, msg, ok) renvoie vrai pour fermer.
+  function fenetre(titre, contenu, valider, texteValider) {
+    var d = el("dialog", { class: "fen", "aria-labelledby": "fen-titre" });
+    var f = el("form", { method: "dialog", novalidate: true });
+    var msg = el("p", { class: "msg", role: "alert" });
+    var ok = el("button", { type: "submit", class: "btn", text: texteValider || "Enregistrer" });
+    f.appendChild(el("h2", { id: "fen-titre", text: titre }));
+    contenu.forEach(function (n) { if (n) f.appendChild(n); });
+    f.appendChild(msg);
+    f.appendChild(el("div", { class: "boutons" }, [ok, el("button", { type: "button", class: "btn plain", text: "Annuler", onclick: function () { d.close(); } })]));
+    d.appendChild(el("button", { type: "button", class: "fermer", "aria-label": "Fermer", text: "×", onclick: function () { d.close(); } }));
+    d.appendChild(f);
+    f.addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      msg.textContent = "";
+      if (await valider(f, msg, ok)) d.close();
+    });
+    d.addEventListener("close", function () { d.remove(); });
+    document.body.appendChild(d);
+    d.showModal();
+    return d;
+  }
+  function champ(label, input, aide) {
+    var id = input.id || ("c" + Math.random().toString(36).slice(2, 8));
+    input.id = id;
+    return el("div", { class: "champ" }, [el("label", { for: id, text: label }), input, aide ? el("small", { text: aide }) : null]);
+  }
+  function pluriel(n, un, plusieurs) { return n + " " + (n > 1 ? plusieurs : un); }
+
   window.PG = {
     client: client, el: el, CONTACT: CONTACT,
     vers: vers, iso: iso, aujourdhuiIso: aujourdhuiIso, dateLongue: dateLongue, dateCourte: dateCourte,
@@ -132,6 +189,7 @@
     messageErreur: messageErreur, sessionExpiree: sessionExpiree, toast: toast,
     lireStock: lireStock, ecrireStock: ecrireStock, lireSession: lireSession, ecrireSession: ecrireSession,
     brancherAffichage: brancherAffichage, occupe: occupe,
+    appeler: appeler, exigerSession: exigerSession, deconnecter: deconnecter, fenetre: fenetre, champ: champ, pluriel: pluriel,
     REDIRECTION: "https://pligagnant.fr/espace/bienvenue/"
   };
 })();

@@ -1,46 +1,57 @@
-/* Onglet « Questionnaire » de la page Mon entreprise : ce dont nous avons besoin pour rédiger un mémoire.
-   Les identifiants (a1, ev3, c7…) sont ceux du questionnaire de référence : ne pas les renuméroter. */
+/* Questionnaires de l'espace client : définitions, état (à remplir, commencé, envoyé) et liste de l'onglet « Questionnaire ».
+   Les identifiants des questions (a1, ev3, c7, va1…) sont ceux du questionnaire de référence : ne pas les renuméroter.
+   La page qui affiche un questionnaire à remplir est dans repondre.js. */
 (function () {
   "use strict";
   var PG = window.PG, el = PG.el;
 
-  var A = [
-    ["Votre entreprise", [
-      ["a1", "Qui dirige l'entreprise, depuis quand, et quel est son parcours ?", "Deux lignes suffisent. Indiquez aussi l'adresse du dépôt s'il diffère du siège."],
-      ["a2", "Combien de personnes sur le terrain, à l'encadrement, en apprentissage ?"],
-      ["a3", "Chiffre d'affaires des trois dernières années, et part faite avec des clients publics"],
-      ["a4", "Comment l'entreprise a commencé, et ce qui a changé depuis", "Trois lignes."]
-    ]],
-    ["Les personnes", [
-      ["a5", "Vos chefs d'équipe et responsables", "Pour chacun : nom, fonction, année d'arrivée, diplôme, habilitations et permis avec leur date de validité, ce qu'il ou elle fait le mieux."],
-      ["a6", "Qui répond quand un client appelle ? Qui décide en cas d'urgence ? Qui remplace qui pendant les congés ?"],
-      ["a7", "Formations suivies par l'équipe depuis deux ans", "Intitulé, année, nombre de personnes."]
-    ]],
-    ["Le matériel", [
-      ["a8", "Votre matériel et vos véhicules", "Type, marque, modèle, année, nombre, acheté ou loué. Qui l'entretient, à quel rythme ?"],
-      ["a9", "Ce que vous avez acheté ou remplacé depuis deux ans, et pourquoi"],
-      ["a10", "En cas de panne en plein chantier, que faites-vous ?", "Un exemple récent, si vous en avez un."]
-    ]],
-    ["Les preuves", [
-      ["a11", "Qualifications, certifications, labels, agréments", "Lesquels, numéro, date de fin de validité. Déposez les certificats dans « Pièces administratives »."],
-      ["a12", "Assurances : assureur, numéro de contrat, montants garantis"],
-      ["a13", "Vos références récentes, en détail", "Dix au plus. Client, lieu, années, nature exacte du travail, quantités (surfaces, linéaires, nombre de sites, heures), montant annuel, nom et téléphone d'une personne qui peut témoigner."],
-      ["a14", "Avez-vous déjà perdu un marché en ayant reçu vos notes ?", "Si oui, envoyez-nous la lettre : elle nous est très utile."],
-      ["a15", "Photos de chantiers, d'équipes, de matériel, logo", "Dites-nous ce que vous avez ; envoyez-les à contact@pligagnant.fr."]
-    ]],
-    ["Votre façon de travailler", [
-      ["a16", "Une journée type d'une équipe, du départ du dépôt au retour"],
-      ["a17", "Comment vérifiez-vous qu'un travail est bien fait ?", "Qui contrôle, avec quel document ?"],
-      ["a18", "Comment tenez-vous le client au courant, et à quelle fréquence ?", "Appel, courriel, compte rendu, application."],
-      ["a19", "Le dernier problème sérieux sur un chantier", "Ce qui s'est passé, ce que vous avez fait, en combien de temps."],
-      ["a20", "Sécurité", "Qui s'en occupe, quels équipements sont fournis, date du document unique, ce que vous avez changé après le dernier accident ou presque-accident."],
-      ["a21", "Déchets : où vont-ils, et comment gardez-vous la trace ?", "Nom et commune des déchetteries, plateformes, repreneurs."],
-      ["a22", "Environnement : ce que vous faites réellement", "Véhicules, produits, eau, bruit, matériel électrique. Des chiffres si vous en avez."],
-      ["a23", "Apprentis, insertion, handicap", "Combien de personnes, avec quelles structures, combien d'heures."],
-      ["a24", "Vos sous-traitants habituels", "Nom, activité, depuis quand vous travaillez ensemble."],
-      ["a25", "Que disent vos clients quand ils vous recommandent ? Que faites-vous mieux que vos concurrents locaux ?"],
-      ["a26", "Avez-vous un ancien mémoire technique ?", "Même imparfait : envoyez-le à contact@pligagnant.fr."]
-    ]]
+  // Questions sur l'entreprise, regroupées plus bas par thème (a3, a11, a12 et a13 ne sont plus posées :
+  // chiffre d'affaires, certificats, assurances et références sont dans le profil, les pièces ou la candidature).
+  var Q = {
+    a1: ["Qui dirige l'entreprise, depuis quand, et quel est son parcours ?", "Deux lignes suffisent. Indiquez aussi l'adresse du dépôt s'il diffère du siège."],
+    a2: ["Combien de personnes sur le terrain, à l'encadrement, en apprentissage ?"],
+    a4: ["Comment l'entreprise a commencé, et ce qui a changé depuis", "Trois lignes."],
+    a5: ["Vos chefs d'équipe et responsables", "Pour chacun : nom, fonction, année d'arrivée, diplôme, habilitations et permis avec leur date de validité, ce qu'il ou elle fait le mieux."],
+    a6: ["Qui répond quand un client appelle ? Qui décide en cas d'urgence ? Qui remplace qui pendant les congés ?"],
+    a7: ["Formations suivies par l'équipe depuis deux ans", "Intitulé, année, nombre de personnes."],
+    a8: ["Votre matériel et vos véhicules", "Type, marque, modèle, année, nombre, acheté ou loué. Qui l'entretient, à quel rythme ?"],
+    a9: ["Ce que vous avez acheté ou remplacé depuis deux ans, et pourquoi"],
+    a10: ["En cas de panne en plein chantier, que faites-vous ?", "Un exemple récent, si vous en avez un."],
+    a14: ["Avez-vous déjà perdu un marché en ayant reçu vos notes ?", "Si oui, envoyez-nous la lettre : elle nous est très utile."],
+    a15: ["Photos de chantiers, d'équipes, de matériel, logo", "Dites-nous ce que vous avez ; envoyez-les à contact@pligagnant.fr."],
+    a16: ["Une journée type d'une équipe, du départ du dépôt au retour"],
+    a17: ["Comment vérifiez-vous qu'un travail est bien fait ?", "Qui contrôle, avec quel document ?"],
+    a18: ["Comment tenez-vous le client au courant, et à quelle fréquence ?", "Appel, courriel, compte rendu, application."],
+    a19: ["Le dernier problème sérieux sur un chantier", "Ce qui s'est passé, ce que vous avez fait, en combien de temps."],
+    a20: ["Sécurité", "Qui s'en occupe, quels équipements sont fournis, date du document unique, ce que vous avez changé après le dernier accident ou presque-accident."],
+    a21: ["Déchets : où vont-ils, et comment gardez-vous la trace ?", "Nom et commune des déchetteries, plateformes, repreneurs."],
+    a22: ["Environnement : ce que vous faites réellement", "Véhicules, produits, eau, bruit, matériel électrique. Des chiffres si vous en avez."],
+    a23: ["Apprentis, insertion, handicap", "Combien de personnes, avec quelles structures, combien d'heures."],
+    a24: ["Vos sous-traitants habituels", "Nom, activité, depuis quand vous travaillez ensemble."],
+    a25: ["Que disent vos clients quand ils vous recommandent ? Que faites-vous mieux que vos concurrents locaux ?"],
+    a26: ["Avez-vous un ancien mémoire technique ?", "Même imparfait : envoyez-le à contact@pligagnant.fr."],
+    // Pour la veille : peu de questions, générales (lues par la veille, voir prive.reponses_veille).
+    va1: ["Les prestations que vous faites", "Le plus précis possible. Ex. : tonte, taille de haies, élagage jusqu'à 15 m."],
+    va2: ["Ce que vous ne faites pas, ou ne voulez plus faire", "Nous écartons les appels d'offres qui portent surtout là-dessus."],
+    va3: ["Les contrats qui vous intéressent le plus", "Entretien à l'année ou chantiers ponctuels, petits ou gros montants…"],
+    vc1: ["Pour quels acheteurs publics avez-vous déjà travaillé ?", "Communes, bailleurs, collèges, hôpitaux… même en sous-traitance."],
+    vc2: ["Vos marchés publics en cours, et quand ils se terminent", "Nous surveillons leur remise en concurrence."],
+    vc3: ["Les acheteurs que vous visez en priorité"],
+    vd1: ["Vos périodes chargées dans l'année", "Pour savoir si un démarrage tombe mal."],
+    vd2: ["Répondre à plusieurs (groupement) ou en sous-traitance : cela vous intéresse ?", "Avec qui, pour quoi."],
+    vd3: ["Autre chose à savoir pour bien choisir vos appels d'offres ?"]
+  };
+  var VEILLE = [
+    { id: "prestations", titre: "Vos prestations", q: ["va1", "va2", "va3"] },
+    { id: "clients", titre: "Vos clients", q: ["vc1", "vc2", "vc3"] },
+    { id: "organisation", titre: "Votre organisation", q: ["vd1", "vd2", "vd3"] }
+  ];
+  var MEMOIRE = [
+    { id: "equipe", titre: "L'entreprise et l'équipe", q: ["a1", "a2", "a4", "a5", "a6", "a7"] },
+    { id: "materiel", titre: "Le matériel", q: ["a8", "a9", "a10"] },
+    { id: "methode", titre: "Votre façon de travailler", q: ["a16", "a17", "a18", "a19"] },
+    { id: "engagements", titre: "Sécurité, environnement, social", q: ["a20", "a21", "a22", "a23", "a24"] },
+    { id: "atouts", titre: "Vos atouts et vos documents", q: ["a25", "a14", "a15", "a26"] }
   ];
 
   var B = {
@@ -131,95 +142,81 @@
     ["c15", "Vos chiffres pour l'environnement sur ce marché", "Part de produits écolabellisés, matériel électrique, distance du dépôt et des fournisseurs, part des déchets valorisés et où. Un critère environnemental est désormais noté dans chaque marché."]
   ];
 
-  function question(q, valeurs) {
-    var id = "q-" + q[0] + "-" + Math.random().toString(36).slice(2, 6);
-    var t = el("textarea", { id: id, maxlength: "4000", rows: "3", "data-q": q[0] });
-    t.value = valeurs[q[0]] || "";
-    return el("div", { class: "champ" }, [el("label", { for: id, text: q[1] }), t, q[2] ? el("small", { text: q[2] }) : null]);
+
+  function plat(t) { return (t || "").toLowerCase().replace(/œ/g, "oe").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }
+  // Volet métier : celui déjà commencé, sinon celui du métier de l'entreprise.
+  function voletDe(d, faites) {
+    var deja = Object.keys(B).filter(function (k) { return B[k].q.some(function (q) { return faites[q[0]]; }); })[0];
+    if (deja) return deja;
+    var m = plat(d.entreprise && d.entreprise.metier);
+    if (!m) return null;
+    var cles = Object.keys(VOLET_DE).sort(function (a, b) { return b.length - a.length; });
+    for (var i = 0; i < cles.length; i++) { var k = plat(cles[i]); if (m === k || m.indexOf(k) >= 0) return VOLET_DE[cles[i]]; }
+    return null;
   }
-  function lire(form) {
+  function questionsDe(ids) { return ids.map(function (k) { return [k, Q[k][0], Q[k][1]]; }); }
+  function repondues(d) { // questions déjà répondues (données complètes de client_entreprise ou seulement les clés de client_tableau)
     var o = {};
-    form.querySelectorAll("textarea[data-q]").forEach(function (t) { o[t.dataset.q] = t.value.trim(); });
+    if (d.questionnaire) Object.keys(d.questionnaire).forEach(function (k) { if (d.questionnaire[k]) o[k] = true; });
+    else (d.questionnaire_cles || []).forEach(function (k) { o[k] = true; });
     return o;
   }
-  function compte(o) { return Object.keys(o).filter(function (k) { return o[k]; }).length; }
+  function compter(qs, faites) { return qs.filter(function (q) { return faites[q[0]]; }).length; }
 
-  function rendreMarche(racine, m, ctx) {
-    var qs = m.questions || {}, rep = qs.rep || {}, sup = qs.sup || [];
-    var f = el("form", { class: "bloc q-marche", novalidate: true });
-    f.appendChild(el("h2", { text: m.acheteur }));
-    f.appendChild(el("p", { class: "aide", text: m.objet + (m.date_limite ? " · à remettre le " + PG.dateLongue(m.date_limite, false) : "") }));
-    if (sup.length) {
-      f.appendChild(el("h3", { text: "Nos questions sur ce dossier" }));
-      sup.forEach(function (s) { f.appendChild(question([s.id, s.q], rep)); });
-      f.appendChild(el("h3", { text: "Pour tout marché" }));
+  // Tous les questionnaires proposés à cette entreprise, dans l'ordre de la liste.
+  function liste(d) {
+    var faites = repondues(d), etats = d.questionnaires_etat || {}, L = [];
+    function entreprise(t, groupe) {
+      var qs = t.q ? questionsDe(t.q) : t.questions;
+      L.push({ id: t.id, groupe: groupe, titre: t.titre, questions: qs, nbRep: compter(qs, faites),
+               envoye: (etats[t.id] || {}).envoye || null, lien: "/espace/questionnaire/?q=" + t.id, volet: t.volet || null });
     }
-    C.forEach(function (q) { f.appendChild(question(q, rep)); });
-    var ok = el("button", { type: "submit", class: "btn", text: "Enregistrer mes réponses pour ce marché" });
-    f.appendChild(el("div", { class: "q-bas" }, [ok]));
-    f.addEventListener("input", function () { ctx.etat.modifie = true; });
-    f.addEventListener("submit", async function (ev) {
-      ev.preventDefault();
-      var r = await ctx.appeler("client_questions_marche", { p_id: m.id, p: lire(f) }, ok);
-      if (!r) return;
-      m.questions = r; ctx.etat.modifie = false;
-      PG.toast("Réponses enregistrées. Merci : nous les reprenons dans votre mémoire.");
+    (d.marches || []).forEach(function (m) {
+      var qs = m.questions || {}, rep = qs.rep || {};
+      var questions = (qs.sup || []).map(function (s) { return [s.id, s.q]; }).concat(C);
+      L.push({ id: "m-" + m.id, marche: m, groupe: "memoire", titre: m.acheteur, sous: m.objet, questions: questions,
+               nbRep: questions.filter(function (q) { return rep[q[0]]; }).length, envoye: qs.envoye || null,
+               dateLimite: m.date_limite || null, lien: "/espace/questionnaire/?m=" + m.id, sup: (qs.sup || []).length });
     });
-    racine.appendChild(f);
+    if (d.entreprise && d.entreprise.formule !== "veille") {
+      MEMOIRE.forEach(function (t) { entreprise(t, "memoire"); });
+      var v = voletDe(d, faites);
+      if (v) entreprise({ id: "metier", titre: "Votre métier : " + B[v].nom.toLowerCase(), questions: B[v].q, volet: v }, "memoire");
+    }
+    VEILLE.forEach(function (t) { entreprise(t, "veille"); });
+    return L;
+  }
+  function etatDe(q) { return q.envoye ? "envoye" : q.nbRep ? "commence" : "a_remplir"; }
+  function texteEtat(q) {
+    return q.envoye ? "Envoyé le " + PG.dateCourte(String(q.envoye).slice(0, 10)) : q.nbRep ? "Commencé" : "À remplir";
+  }
+  function texteBouton(q) { return q.envoye ? "Modifier" : q.nbRep ? "Continuer" : "Y répondre"; }
+
+  // Onglet « Questionnaire » de Mon entreprise : sujet, nombre de questions, état, et un bouton par questionnaire.
+  function rendreListe(racine, d) {
+    var L = liste(d);
+    racine.appendChild(el("p", { class: "ent-intro", text: "Vos réponses nous servent à choisir vos appels d'offres et à écrire vos mémoires." }));
+    [["memoire", "Pour vos mémoires"], ["veille", "Pour votre veille"]].forEach(function (g) {
+      var qs = L.filter(function (q) { return q.groupe === g[0]; });
+      if (!qs.length) return;
+      var ul = el("ul", { class: "q-liste" });
+      qs.forEach(function (q) {
+        var e = etatDe(q);
+        ul.appendChild(el("li", { class: "q-ligne q-" + e }, [
+          el("div", { class: "q-txt" }, [
+            el("b", { text: q.titre }),
+            q.sous ? el("span", { class: "q-sous", text: q.sous }) : null,
+            el("span", { class: "q-meta" }, [PG.pluriel(q.questions.length, "question", "questions") + " · ", el("span", { class: "q-etat", text: texteEtat(q) })])
+          ]),
+          el("a", { class: "btn petit" + (e === "envoye" ? " blanc" : ""), href: q.lien, text: texteBouton(q), "aria-label": texteBouton(q) + " : " + q.titre })
+        ]));
+      });
+      racine.appendChild(el("section", { class: "partie" }, [el("h2", { text: g[1] }), ul]));
+    });
+    if (d.entreprise && d.entreprise.formule === "veille") {
+      racine.appendChild(el("p", { class: "aide", text: "Les questionnaires pour vos mémoires arrivent quand vous nous confiez un appel d'offres." }));
+    }
   }
 
-  function rendre(racine, ctx) {
-    var d = ctx.etat.d, stock = d.questionnaire || {}, marches = d.marches || [];
-    racine.appendChild(el("p", { class: "ent-intro" }, [el("b", { text: "Ce questionnaire sert à écrire vos mémoires. " }),
-      "Plus vos réponses sont concrètes (des noms, des chiffres, des exemples), plus le mémoire vous ressemble. Répondez comme au téléphone, sans faire de phrases. Vous pouvez enregistrer et revenir plus tard ; une question sans réponse sera signalée dans le mémoire pour que vous la complétiez."]));
-
-    if (marches.length) {
-      racine.appendChild(el("h2", { class: "q-titre", text: marches.length > 1 ? "Vos mémoires en cours" : "Votre mémoire en cours" }));
-      var zone = el("div", { class: "profil" });
-      marches.forEach(function (m) { rendreMarche(zone, m, ctx); });
-      racine.appendChild(zone);
-    }
-
-    racine.appendChild(el("h2", { class: "q-titre", text: "Votre entreprise et votre métier" }));
-    racine.appendChild(el("p", { class: "ent-intro", text: "À remplir une seule fois : nous le reprenons pour chacun de vos mémoires." }));
-    var f = el("form", { class: "profil", novalidate: true });
-    A.forEach(function (bloc) {
-      f.appendChild(el("section", { class: "bloc" }, [el("h2", { text: bloc[0] })].concat(bloc[1].map(function (q) { return question(q, stock); }))));
-    });
-
-    var choix = el("select", { id: "q-metier" }, Object.keys(B).map(function (k) { return el("option", { value: k, text: B[k].nom }); }));
-    var devine = VOLET_DE[ctx.cleMetier(d.entreprise.metier) || ""];
-    var deja = Object.keys(B).filter(function (k) { return B[k].q.some(function (q) { return stock[q[0]]; }); })[0];
-    choix.value = deja || devine || "so";
-    var corpsMetier = el("div", { class: "q-metier" });
-    var saisie = {};
-    function rendreMetier() {
-      corpsMetier.textContent = "";
-      B[choix.value].q.forEach(function (q) { corpsMetier.appendChild(question(q, Object.assign({}, stock, saisie))); });
-    }
-    choix.addEventListener("change", function () { Object.assign(saisie, lire(corpsMetier)); rendreMetier(); });
-    rendreMetier();
-    f.appendChild(el("section", { class: "bloc" }, [el("h2", { text: "Votre métier" }),
-      el("div", { class: "champ" }, [el("label", { for: "q-metier", text: "Questions adaptées à" }), choix]), corpsMetier]));
-
-    var msg = el("p", { class: "msg", role: "alert" });
-    var ok = el("button", { type: "submit", class: "btn", text: "Enregistrer mes réponses" });
-    var quand = el("span", { class: "quand", text: d.questionnaire_maj ? compte(stock) + " réponses enregistrées, la dernière fois le " + PG.dateLongue(String(d.questionnaire_maj).slice(0, 10), false) : "" });
-    f.appendChild(el("div", { class: "enregistrer" }, [ok, quand, msg]));
-    f.addEventListener("input", function () { ctx.etat.modifie = true; });
-    f.addEventListener("submit", async function (ev) {
-      ev.preventDefault();
-      // On garde les réponses déjà données pour un autre métier, on remplace tout ce qui est à l'écran.
-      var corps = Object.assign({}, stock, saisie, lire(f));
-      var r = await ctx.appeler("client_questionnaire_enregistrer", { p: corps }, ok);
-      if (!r) return;
-      d.questionnaire = stock = r; saisie = {}; d.questionnaire_maj = new Date().toISOString();
-      ctx.etat.modifie = false;
-      quand.textContent = compte(r) + " réponses enregistrées aujourd'hui";
-      PG.toast("Réponses enregistrées. Merci.");
-    });
-    racine.appendChild(f);
-  }
-
-  window.PG_QUESTIONNAIRE = { rendre: rendre, A: A, B: B, C: C };
+  window.PG_QUESTIONNAIRE = { Q: Q, B: B, C: C, VEILLE: VEILLE, MEMOIRE: MEMOIRE, liste: liste, etatDe: etatDe, texteEtat: texteEtat, rendreListe: rendreListe };
 })();
