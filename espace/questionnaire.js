@@ -173,10 +173,11 @@
     }
     (d.marches || []).forEach(function (m) {
       var qs = m.questions || {}, rep = qs.rep || {};
-      var questions = (qs.sup || []).map(function (s) { return [s.id, s.q]; }).concat(C);
+      // Après l'analyse du dossier, nos questions propres à ce marché (12 au plus) remplacent les questions générales.
+      var questions = (qs.sup || []).length ? qs.sup.map(function (s) { return [s.id, s.q]; }) : C;
       L.push({ id: "m-" + m.id, marche: m, groupe: "memoire", titre: m.acheteur, sous: m.objet, questions: questions,
                nbRep: questions.filter(function (q) { return rep[q[0]]; }).length, envoye: qs.envoye || null,
-               dateLimite: m.date_limite || null, lien: "/espace/questionnaire/?m=" + m.id, sup: (qs.sup || []).length });
+               dateLimite: m.date_limite || null, lien: "/espace/questionnaire/?m=" + m.id });
     });
     if (d.entreprise && d.entreprise.formule !== "veille") {
       MEMOIRE.forEach(function (t) { entreprise(t, "memoire"); });

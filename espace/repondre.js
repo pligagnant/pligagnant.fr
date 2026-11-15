@@ -57,11 +57,6 @@
       remplir();
       f.appendChild(el("div", { class: "champ" }, [el("label", { for: "q-volet", text: "Questions adaptées à" }), choix]));
       f.appendChild(corps);
-    } else if (q.sup) {
-      f.appendChild(el("h2", { text: "Nos questions sur ce dossier" }));
-      q.questions.slice(0, q.sup).forEach(function (x) { f.appendChild(champ(x, vals)); });
-      f.appendChild(el("h2", { text: "Pour tout marché" }));
-      q.questions.slice(q.sup).forEach(function (x) { f.appendChild(champ(x, vals)); });
     } else {
       q.questions.forEach(function (x) { f.appendChild(champ(x, vals)); });
     }
