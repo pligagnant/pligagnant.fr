@@ -1,10 +1,10 @@
 /* Base de l'espace client (les pages publiques utilisent site.css, même palette, même police). */
-/* Police hébergée sur le site (Plus Jakarta Sans, licence SIL OFL) : aucune requête vers Google. */
-@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-display: swap; font-weight: 200 800;
-  src: url(/fonts/plus-jakarta-sans-latin.woff2) format("woff2");
+/* Police hébergée sur le site (Urbanist, licence SIL OFL) : aucune requête vers Google. */
+@font-face { font-family: "Urbanist"; font-style: normal; font-display: swap; font-weight: 100 900;
+  src: url(/fonts/urbanist-latin.woff2) format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-display: swap; font-weight: 200 800;
-  src: url(/fonts/plus-jakarta-sans-latin-ext.woff2) format("woff2");
+@font-face { font-family: "Urbanist"; font-style: normal; font-display: swap; font-weight: 100 900;
+  src: url(/fonts/urbanist-latin-ext.woff2) format("woff2");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 :root {
   --ink: #0F1B3D;
@@ -18,7 +18,7 @@
   --kraft: #D6B37C;
   --kraft-dark: #B88F55;
   --highlight: #FFE45C;
-  --font: "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
+  --font: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -29,7 +29,8 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
+  font-weight: 450;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
@@ -287,7 +288,7 @@ h3 { font-size: 1.15rem; font-weight: 700; }
   .section { padding-top: 56px; padding-bottom: 56px; }
 }
 @media (max-width: 520px) {
-  body { font-size: 1rem; }
+  body { font-size: 1.0625rem; }
   .hero .lead { font-size: 1.08rem; }
   .actions .btn:not(.plain) { width: 100%; }
   .price-row { font-size: 1.08rem; flex-wrap: wrap; }
