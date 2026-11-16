@@ -28,7 +28,7 @@
 .champ > span, .champ > label { font-weight: 700; font-size: 0.98rem; }
 .champ small { color: var(--muted); font-size: 0.88rem; }
 .champ input, .champ textarea, .champ select, .ref input {
-  width: 100%; min-height: 50px; padding: 10px 14px; border: 1px solid #C5CDDD; border-radius: 8px;
+  width: 100%; min-height: 50px; padding: 10px 14px; border: 1px solid #C5CDDD; border-radius: 2px;
   font: inherit; font-size: 1.02rem; color: var(--ink); background: #fff;
 }
 .champ textarea { min-height: 96px; resize: vertical; }
@@ -179,7 +179,7 @@
 .chargement { color: var(--muted); padding: 40px 0; }
 
 /* Fenêtres */
-dialog.fen { width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border: 0; border-radius: 12px; padding: 0; color: var(--ink); box-shadow: 0 24px 48px -20px rgba(15, 27, 61, 0.4); }
+dialog.fen { width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border: 0; border-radius: 4px; padding: 0; color: var(--ink); box-shadow: 0 24px 48px -20px rgba(15, 27, 61, 0.4); }
 dialog.fen::backdrop { background: rgba(15, 27, 61, 0.45); }
 .fen form, .fen .fen-in { padding: clamp(20px, 4vw, 30px); display: flex; flex-direction: column; gap: 16px; }
 .fen h2 { font-size: 1.35rem; padding-right: 36px; }

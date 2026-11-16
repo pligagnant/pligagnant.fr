@@ -55,8 +55,8 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 /* Buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 50px; padding: 0 24px; border-radius: 999px;
-  background: var(--blue); color: #fff; border: 1.5px solid var(--blue);
+  min-height: 50px; padding: 0 24px; border-radius: 0;
+  background: var(--blue); color: #fff; border: 1px solid var(--blue);
   font: inherit; font-weight: 700; font-size: 1.05rem; text-decoration: none; cursor: pointer;
 }
 .btn:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
