@@ -1,16 +1,24 @@
-/* Pli: ink for text, one blue for actions, highlighter yellow for what the reader must notice. Same palette as accueil.css. */
+/* Base de l'espace client (les pages publiques utilisent site.css, même palette, même police). */
+/* Police hébergée sur le site (Plus Jakarta Sans, licence SIL OFL) : aucune requête vers Google. */
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url(/fonts/plus-jakarta-sans-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url(/fonts/plus-jakarta-sans-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 :root {
   --ink: #0F1B3D;
   --muted: #4A5675;
   --paper: #FFFFFF;
-  --band: #F4F6FB;
+  --band: #F4F6FA;
   --rule: #D5DBEA;
+  --night: #0A1633;
   --blue: #2F55E4;
   --blue-dark: #2347C8;
   --kraft: #D6B37C;
   --kraft-dark: #B88F55;
   --highlight: #FFE45C;
-  --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font: "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -23,13 +31,14 @@ body {
   font-family: var(--font);
   font-size: 1.0625rem;
   line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 img, svg { max-width: 100%; }
 p { margin: 0; }
 a { color: var(--blue); text-underline-offset: 3px; }
 h1, h2, h3 { margin: 0; line-height: 1.08; text-wrap: balance; }
-h1 { font-size: clamp(2.2rem, 6.2vw, 3.9rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.015em; }
-h2 { font-size: clamp(1.65rem, 3.6vw, 2.35rem); font-weight: 800; font-stretch: 108%; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.2rem, 6.2vw, 3.9rem); font-weight: 700; letter-spacing: -0.025em; }
+h2 { font-size: clamp(1.65rem, 3.6vw, 2.35rem); font-weight: 700; letter-spacing: -0.02em; }
 h3 { font-size: 1.15rem; font-weight: 700; }
 
 .wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
@@ -46,8 +55,8 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 /* Buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 52px; padding: 0 24px; border-radius: 8px;
-  background: var(--blue); color: #fff; border: 2px solid var(--blue);
+  min-height: 50px; padding: 0 24px; border-radius: 999px;
+  background: var(--blue); color: #fff; border: 1.5px solid var(--blue);
   font: inherit; font-weight: 700; font-size: 1.05rem; text-decoration: none; cursor: pointer;
 }
 .btn:hover { background: var(--blue-dark); border-color: var(--blue-dark); }

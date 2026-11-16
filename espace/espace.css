@@ -1,12 +1,16 @@
 /* Espace client : prolonge style.css (mêmes couleurs, même typographie). */
 
-.esp-top { border-bottom: 1px solid var(--rule); background: #fff; }
-.esp-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
-.esp-top .brand span { font-weight: 700; font-stretch: 100%; font-size: 0.95rem; color: var(--muted); letter-spacing: 0; }
-.esp-nav { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; }
-.esp-nav a, .esp-nav button { font: inherit; font-weight: 700; font-size: 0.98rem; color: var(--blue); background: none; border: 0; padding: 6px 0; cursor: pointer; text-decoration: none; }
-.esp-nav a:hover, .esp-nav button:hover { text-decoration: underline; }
-.esp-nav .qui { color: var(--muted); font-weight: 600; font-size: 0.92rem; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Barre du haut sombre, comme les pages publiques. */
+.esp-top { background: var(--night); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.esp-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; min-height: 64px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+.esp-top .logo [fill="#0F1B3D"] { fill: #fff; }
+.esp-top .logo [fill="#2F55E4"] { fill: #7F9BFF; }
+.esp-top .brand span { font-weight: 600; font-size: 0.95rem; color: #C6CFE6; letter-spacing: 0; padding-left: 12px; margin-left: 2px; border-left: 1px solid rgba(255, 255, 255, 0.2); }
+.esp-nav { display: flex; align-items: center; gap: 6px 22px; flex-wrap: wrap; }
+.esp-nav a, .esp-nav button { font: inherit; font-weight: 600; font-size: 0.95rem; color: #D7DEF0; background: none; border: 0; padding: 6px 0; cursor: pointer; text-decoration: none; }
+.esp-nav a:hover, .esp-nav button:hover { color: #fff; }
+.esp-nav .qui { color: #9FABCB; font-weight: 500; font-size: 0.9rem; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.esp-top :focus-visible { outline-color: #fff; }
 
 .lien { font: inherit; color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .lien:hover { color: var(--blue-dark); }
@@ -24,11 +28,11 @@
 .champ > span, .champ > label { font-weight: 700; font-size: 0.98rem; }
 .champ small { color: var(--muted); font-size: 0.88rem; }
 .champ input, .champ textarea, .champ select, .ref input {
-  width: 100%; min-height: 50px; padding: 10px 14px; border: 2px solid var(--rule); border-radius: 8px;
+  width: 100%; min-height: 50px; padding: 10px 14px; border: 1px solid #C5CDDD; border-radius: 8px;
   font: inherit; font-size: 1.02rem; color: var(--ink); background: #fff;
 }
 .champ textarea { min-height: 96px; resize: vertical; }
-.champ input:focus, .champ textarea:focus, .champ select:focus, .ref input:focus { border-color: var(--blue); outline: none; }
+.champ input:focus, .champ textarea:focus, .champ select:focus, .ref input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 3px rgba(47, 85, 228, 0.18); }
 .mdp { position: relative; }
 .mdp input { padding-right: 96px; }
 .mdp button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--blue); background: #fff; border: 0; padding: 8px 10px; cursor: pointer; border-radius: 6px; }
@@ -350,7 +354,7 @@ dialog.fen.large { width: min(640px, calc(100vw - 24px)); }
 }
 
 /* ---------- Menu : page en cours, nombre de choses à faire ---------- */
-.esp-nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.esp-nav a[aria-current="page"] { color: #fff; text-decoration: underline; text-decoration-color: #7F9BFF; text-decoration-thickness: 2px; text-underline-offset: 8px; }
 .esp-nav .badge { display: inline-block; min-width: 1.35em; margin-left: 5px; padding: 0 5px; border-radius: 999px; background: #C2410C; color: #fff;
   font-size: 0.78rem; font-weight: 700; line-height: 1.35em; text-align: center; vertical-align: 1px; text-decoration: none; }
 .esp-nav .badge[hidden] { display: none; }
